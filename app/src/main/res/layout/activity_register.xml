@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
     <TextView
         android:id="@+id/TitleRegister"
         android:layout_width="wrap_content"
@@ -96,6 +96,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/RegisButton"
         app:layout_constraintVertical_bias="0.07" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
