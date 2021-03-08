@@ -18,5 +18,9 @@ class MainActivity : AppCompatActivity() {
             IntentToHome.putExtra(EXTRA_CLIENT_DATA,client)
             startActivity(IntentToHome)
         }
+        RegisText.setOnClickListener {
+            var IntentToRegis = Intent(this,RegisterActivity::class.java)
+            startActivity(IntentToRegis)
+        }
     }
 }

@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="bluelogo">#3366CC</color>
     <color name="greenlogin">#4EC715</color>
+    <color name="hint">#E5E5E5</color>
 </resources>
