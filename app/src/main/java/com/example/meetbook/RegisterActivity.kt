@@ -14,7 +14,10 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_register)
 
         RegisButton.setOnClickListener {
-            RegisStatus.text="User ${RUsername.text} has been created"
+            if (RUsername.text.toString().length>0 && RPassword.text.toString().length>0){
+                RegisStatus.text="User ${RUsername.text} has been created"
+            }
+            else {RegisStatus.text="Username and Password cannot be empty"}
             RUsername.setText("")
             RPassword.setText("")
         }
@@ -32,6 +35,6 @@ class RegisterActivity : AppCompatActivity() {
 /* Menampilkan kembali data yang telah disimpan kedalam key EXTRA */
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        RegisStatus.text=savedInstanceState?.getString(EXTRA_UNAME) ?: "Pastikan Username dan Password telah terisi"
+        RegisStatus.text=savedInstanceState?.getString(EXTRA_UNAME) ?: "Username and Password cannot be empty"
     }
 }
