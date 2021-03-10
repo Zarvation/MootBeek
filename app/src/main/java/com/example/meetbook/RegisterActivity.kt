@@ -22,7 +22,7 @@ class RegisterActivity : AppCompatActivity() {
             RPassword.setText("")
         }
 
-        LoginText.setOnClickListener {
+        LoginText.setOnClickListener { // Ketika Login diklik, terjadi pemindahan screen dari RegisterActivity ke MainActivity
             var IntentToLogin = Intent(this, MainActivity::class.java)
             startActivity(IntentToLogin)
         }
