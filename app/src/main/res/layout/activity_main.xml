@@ -89,4 +89,15 @@
                             android:textSize="20dp" />
                 </LinearLayout>
         </ScrollView>
+        <TextView
+            android:id="@+id/SupportText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_marginTop="70dp"
+            android:fontFamily="@font/caviardreams"
+            android:text="Support Us"
+            android:textColor="@color/black"
+            android:textSize="14dp"
+            android:onClick="openWeb"/>
 </LinearLayout>

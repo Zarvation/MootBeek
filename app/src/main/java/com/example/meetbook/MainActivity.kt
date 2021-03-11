@@ -1,10 +1,13 @@
 package com.example.meetbook
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -22,5 +25,20 @@ class MainActivity : AppCompatActivity() {
             var IntentToRegis = Intent(this,RegisterActivity::class.java)
             startActivity(IntentToRegis)
         }
+    }
+
+    fun openWeb(view: View) {
+        //Intent implisit browsing
+        var txt = "supportus"
+        var googleSearch = Uri.parse("https://www.google.com/search?q=$txt")
+        var googleIntent = Intent(Intent.ACTION_VIEW, googleSearch)
+
+        //memeriksa apakah intent ini bisa dijalankan atau tidak
+        if (googleIntent.resolveActivity((packageManager)) != null)
+        {
+            startActivity(googleIntent)
+        }
+        else
+            Log.e("intent", "gagal dijalankan")
     }
 }
