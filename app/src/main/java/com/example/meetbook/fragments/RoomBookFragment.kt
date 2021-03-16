@@ -1,6 +1,10 @@
 package com.example.meetbook.fragments
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.Image
 import android.os.Bundle
+import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +15,8 @@ import com.example.meetbook.ARG_GET_ROOM_CAP
 import com.example.meetbook.ARG_GET_ROOM_IMAGE
 import com.example.meetbook.ARG_GET_ROOM_TITLE
 import com.example.meetbook.R
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +33,22 @@ class RoomBookFragment : Fragment() {
     private var param1: String? = null
     private var param2: Int? = null
     private var param3: String? = null
+    var title : String = ""
+        get() = field.toString()
+        set(value){
+            if (value === "")
+                field = "Kosong"
+            else
+                field = value
+        }
+    var cap : Int = 0
+        get() = field.toInt()
+        set(value){
+            if (value === 0)
+                field = 0
+            else
+                field = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +67,13 @@ class RoomBookFragment : Fragment() {
         val roomtitle = view.findViewById<TextView>(R.id.BookMeetRoomTitle)
         val roomcap = view.findViewById<TextView>(R.id.BookMeetRoomCap)
         val roomimage = view.findViewById<ImageView>(R.id.BookMeetRoomImg)
+        roomtitle.text = param1
+        roomcap.text = "${param2.toString()} Seats"
+
+        //Convert Base64 String into Image
+        val imageBytes = Base64.decode(param3, Base64.DEFAULT)
+        val decodeImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        roomimage.setImageBitmap(decodeImage)
         return view
     }
 

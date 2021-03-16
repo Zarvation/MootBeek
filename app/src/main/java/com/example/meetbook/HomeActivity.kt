@@ -2,6 +2,7 @@ package com.example.meetbook
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.example.meetbook.fragments.InterfaceData
 import com.example.meetbook.fragments.RoomBookFragment
 import com.example.meetbook.fragments.RoomListFragment
@@ -19,10 +20,10 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
     }
 
     override fun sendRoomData(title: String, capacity: Int, image: String) {
-        val fragmentB = RoomBookFragment.newInstance(title.toString(), capacity, image.toString())
+        val fragmentBook = RoomBookFragment.newInstance(title.toString(), capacity, image)
 
         val transaksi = this.supportFragmentManager.beginTransaction()
-        transaksi.replace(R.id.fragmentContainer, fragmentB)
+        transaksi.replace(R.id.fragmentContainer, fragmentBook)
         transaksi.addToBackStack(null)
         transaksi.commit()
     }

@@ -31,6 +31,6 @@
         android:layout_width="600dp"
         android:layout_height="260dp"
         android:layout_gravity="center"
-        android:src="@drawable/meetroom1" />
+         />
 
 </LinearLayout>
