@@ -13,12 +13,17 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        //Menerima Extra dari MainACtivity
         var client = intent.getParcelableExtra<Client>(EXTRA_CLIENT_DATA)
+
+        //Mengirim client ke Fragment RoomList lewat newInstance
         val roomlistfragment = RoomListFragment.newInstance(client?.Username.toString())
+        //Begin transaction fragment
         supportFragmentManager
             .beginTransaction().replace(R.id.fragmentContainer, roomlistfragment).commit()
     }
 
+    //Meng-override fungsi sendRoomData untuk memulai fragment RoomBook dengan mengirim data Room tersebut
     override fun sendRoomData(title: String, capacity: Int, image: String) {
         val fragmentBook = RoomBookFragment.newInstance(title.toString(), capacity, image)
 

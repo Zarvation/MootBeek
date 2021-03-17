@@ -42,23 +42,29 @@ class RoomListFragment : Fragment() {
         }
     }
 
+    //Tambah interfaceData
     private lateinit var interfaceData: InterfaceData
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        //hapus "return" ganti dengan val View agar dapat memanggil property dari layout fragment
         val view = inflater.inflate(R.layout.fragment_room_list, container, false)
 
+        //Deklarasi komponen
         val meettitle = view.findViewById<TextView>(R.id.MeetRoomTitle)
         val meetcap = view.findViewById<TextView>(R.id.MeetRoomCap)
         val meetimage = view.findViewById<ImageView>(R.id.MeetRoomImg)
         val roomItem = view.findViewById<LinearLayout>(R.id.RoomItem)
         val clientStatus = view.findViewById<TextView>(R.id.ClientStatus)
+
+        //Menerima isi argument
         var usernameClient = arguments?.getString(ARG_CLIENT_NAME)
         clientStatus.text = "Login as $usernameClient"
 
+        //tambahkan interfacedata dengan aktivitas dari interfaceData
         interfaceData = activity as InterfaceData
 
-
+        //Decode Gambar menjadi bitmap dan set image pada imageview
         val bitmap = BitmapFactory.decodeResource(resources, R.drawable.meetroom1)
         meetimage.setImageBitmap(bitmap as Bitmap)
 
@@ -69,6 +75,8 @@ class RoomListFragment : Fragment() {
         val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
         val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
         // --> End
+
+        //Btn diclick -> jalankan fungsi interfaceData (kembali ke HomeActivity untuk override)
         roomItem.setOnClickListener {
             interfaceData.sendRoomData(meettitle.text.toString(),meetcap.text.substring(0,1).toInt(),imageString)
         }
@@ -89,7 +97,7 @@ class RoomListFragment : Fragment() {
         fun newInstance(param1: String) =
                 RoomListFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_CLIENT_NAME, param1)
+                        putString(ARG_CLIENT_NAME, param1) //mengirim bundle yang berisi param1 ke argument
                         //putString(ARG_PARAM2, param2)
                     }
                 }

@@ -35,6 +35,9 @@ class RoomBookFragment : Fragment() {
     private var param1: String? = null
     private var param2: Int? = null
     private var param3: String? = null
+
+    //Pengirim dengan Getter dan Setter
+        /*
     var title : String = ""
         get() = field.toString()
         set(value){
@@ -52,8 +55,11 @@ class RoomBookFragment : Fragment() {
                 field = value
         }
 
+         */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Menerima argument
         arguments?.let {
             param1 = it.getString(ARG_GET_ROOM_TITLE)
             param2 = it.getInt(ARG_GET_ROOM_CAP)
@@ -66,9 +72,11 @@ class RoomBookFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_room_book, container, false)
 
+        //Inisialisasi komponen atau property dari fragment
         val roomtitle = view.findViewById<TextView>(R.id.BookMeetRoomTitle)
         val roomcap = view.findViewById<TextView>(R.id.BookMeetRoomCap)
         val roomimage = view.findViewById<ImageView>(R.id.BookMeetRoomImg)
+
         roomtitle.text = param1
         roomcap.text = "${param2.toString()} Seats"
 
@@ -107,7 +115,7 @@ class RoomBookFragment : Fragment() {
         fun newInstance(param1: String, param2: Int, param3: String) =
                 RoomBookFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_GET_ROOM_TITLE, param1)
+                        putString(ARG_GET_ROOM_TITLE, param1) //mengirim bundle yang berisi param1, param2, param3 ke argument
                         putInt(ARG_GET_ROOM_CAP, param2)
                         putString(ARG_GET_ROOM_IMAGE, param3)
                     }
