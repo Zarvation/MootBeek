@@ -6,8 +6,6 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_register.*
 
-/*Deklarasi Key untuk menyimpan data dalam onSaveInstanceState*/
-private const val EXTRA_UNAME =  "EXTRA_UNAME"
 class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

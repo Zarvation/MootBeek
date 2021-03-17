@@ -15,6 +15,8 @@ import android.widget.TextView
 import com.example.meetbook.ARG_CLIENT_NAME
 import com.example.meetbook.R
 import kotlinx.android.synthetic.main.fragment_room_list.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.ByteArrayOutputStream
 
 // TODO: Rename parameter arguments, choose names that match
@@ -59,6 +61,7 @@ class RoomListFragment : Fragment() {
 
         val bitmap = BitmapFactory.decodeResource(resources, R.drawable.meetroom1)
         meetimage.setImageBitmap(bitmap as Bitmap)
+
 
         //Convert Image into Base64 String --> Start
         val byteArrayOutputStream = ByteArrayOutputStream()

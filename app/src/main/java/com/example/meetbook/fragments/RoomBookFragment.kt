@@ -15,6 +15,8 @@ import com.example.meetbook.ARG_GET_ROOM_CAP
 import com.example.meetbook.ARG_GET_ROOM_IMAGE
 import com.example.meetbook.ARG_GET_ROOM_TITLE
 import com.example.meetbook.R
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
@@ -71,10 +73,24 @@ class RoomBookFragment : Fragment() {
         roomcap.text = "${param2.toString()} Seats"
 
         //Convert Base64 String into Image
+        /*val imageBytes = Base64.decode(param3, Base64.DEFAULT)
+        val decodeImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        roomimage.setImageBitmap(decodeImage)*/
+
+        //Proses AsyncTask untuk load gambar
+        doAsync{
+            val imageresult=decodeStrImg(param3)
+            uiThread {
+                roomimage.setImageBitmap(imageresult)
+            }
+        }
+        return view
+    }
+    //Function to Convert String into Image (bitmap)
+    fun decodeStrImg (param3:String?): Bitmap? {
         val imageBytes = Base64.decode(param3, Base64.DEFAULT)
         val decodeImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        roomimage.setImageBitmap(decodeImage)
-        return view
+        return decodeImage
     }
 
     companion object {
