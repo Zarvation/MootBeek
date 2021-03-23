@@ -25,7 +25,7 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
 
     //Meng-override fungsi sendRoomData untuk memulai fragment RoomBook dengan mengirim data Room tersebut
     override fun sendRoomData(title: String, capacity: Int, image: String) {
-        val fragmentBook = RoomBookFragment.newInstance(title.toString(), capacity, image)
+        val fragmentBook = RoomBookFragment.newInstance(title,capacity,image)
 
         val transaksi = this.supportFragmentManager.beginTransaction()
         transaksi.replace(R.id.fragmentContainer, fragmentBook)

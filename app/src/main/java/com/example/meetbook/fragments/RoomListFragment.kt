@@ -12,8 +12,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.meetbook.ARG_CLIENT_NAME
 import com.example.meetbook.R
+import com.example.meetbook.RoomListRecyclerViewAdapter
+import com.example.meetbook.Rooms
 import kotlinx.android.synthetic.main.fragment_room_list.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -33,6 +37,9 @@ class RoomListFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var RoomItems : MutableList<Rooms> = mutableListOf(
+
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +47,27 @@ class RoomListFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+        //Decode Gambar menjadi bitmap dan set image pada imageview
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.meetroom1)
+        //meetimage.setImageBitmap(bitmap as Bitmap)
+
+        //Convert Image into Base64 String --> Start
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+        val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
+        val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+        // --> End
+
+        RoomItems.add(Rooms("Room 1A", 8, imageString))
+        RoomItems.add(Rooms("Room 2A", 10, imageString))
     }
 
     //Tambah interfaceData
     private lateinit var interfaceData: InterfaceData
+    private lateinit var RoomListdapter : RoomListRecyclerViewAdapter
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -51,11 +75,12 @@ class RoomListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_room_list, container, false)
 
         //Deklarasi komponen
-        val meettitle = view.findViewById<TextView>(R.id.MeetRoomTitle)
-        val meetcap = view.findViewById<TextView>(R.id.MeetRoomCap)
-        val meetimage = view.findViewById<ImageView>(R.id.MeetRoomImg)
-        val roomItem = view.findViewById<LinearLayout>(R.id.RoomItem)
+        //val meettitle = view.findViewById<TextView>(R.id.MeetRoomTitle)
+        //val meetcap = view.findViewById<TextView>(R.id.MeetRoomCap)
+        //val meetimage = view.findViewById<ImageView>(R.id.MeetRoomImg)
+        //val roomItem = view.findViewById<LinearLayout>(R.id.RoomItem)
         val clientStatus = view.findViewById<TextView>(R.id.ClientStatus)
+        val recyclerviewget = view.findViewById<RecyclerView>(R.id.recyclerViewRoomList)
 
         //Menerima isi argument
         var usernameClient = arguments?.getString(ARG_CLIENT_NAME)
@@ -65,21 +90,29 @@ class RoomListFragment : Fragment() {
         interfaceData = activity as InterfaceData
 
         //Decode Gambar menjadi bitmap dan set image pada imageview
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.meetroom1)
-        meetimage.setImageBitmap(bitmap as Bitmap)
-
+        //val bitmap = BitmapFactory.decodeResource(resources, R.drawable.meetroom1)
+        //meetimage.setImageBitmap(bitmap as Bitmap)
 
         //Convert Image into Base64 String --> Start
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
-        val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+        //val byteArrayOutputStream = ByteArrayOutputStream()
+        //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+        //val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
+        //val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
         // --> End
 
         //Btn diclick -> jalankan fungsi interfaceData (kembali ke HomeActivity untuk override)
-        roomItem.setOnClickListener {
-            interfaceData.sendRoomData(meettitle.text.toString(),meetcap.text.substring(0,1).toInt(),imageString)
-        }
+        //roomItem.setOnClickListener {
+        //    interfaceData.sendRoomData(meettitle.text.toString(),meetcap.text.substring(0,1).toInt(),imageString)
+        //}
+
+        //RoomItems.add(Rooms("Room 1A", 8, imageString))
+        //RoomItems.add(Rooms("Room 2A", 10, imageString))
+
+        //Roomlist
+        RoomListdapter = RoomListRecyclerViewAdapter(RoomItems, interfaceData)
+        recyclerviewget.adapter = RoomListdapter
+        recyclerviewget.layoutManager = LinearLayoutManager(activity)
+
         return view
     }
 
