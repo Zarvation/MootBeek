@@ -1,7 +1,14 @@
 package com.example.meetbook.fragments
 
+import android.app.TimePickerDialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.icu.text.DateFormat
+import android.icu.text.SimpleDateFormat
 import android.media.Image
 import android.os.Bundle
 import android.util.Base64
@@ -9,16 +16,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.meetbook.ARG_GET_ROOM_CAP
-import com.example.meetbook.ARG_GET_ROOM_IMAGE
-import com.example.meetbook.ARG_GET_ROOM_TITLE
-import com.example.meetbook.R
+import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
+import com.example.meetbook.*
+import kotlinx.android.synthetic.main.fragment_room_book.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.sql.Time
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -57,6 +67,25 @@ class RoomBookFragment : Fragment() {
 
          */
 
+    //Broadcast
+    private val meetingProgressReceiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            //Mengambil persen durasi
+            var meeting_percentage = intent?.getIntExtra(EXTRA_MEETING_PERCENTAGE, 0)
+            //mengambil status selesai
+            var meeting_finish = intent?.getBooleanExtra(EXTRA_MEETING_FINISH, true)
+
+            //update progressbar
+            MeetingProgress.progress = meeting_percentage ?: 0
+
+            //Jika selesai, jalankan toast
+            if (meeting_finish!!){
+                Toast.makeText(activity, "Meeting Finished", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Menerima argument
@@ -76,6 +105,9 @@ class RoomBookFragment : Fragment() {
         val roomtitle = view.findViewById<TextView>(R.id.BookMeetRoomTitle)
         val roomcap = view.findViewById<TextView>(R.id.BookMeetRoomCap)
         val roomimage = view.findViewById<ImageView>(R.id.BookMeetRoomImg)
+        val startTimePick = view.findViewById<TextView>(R.id.StartTime)
+        val endTimePick = view.findViewById<TextView>(R.id.EndTime)
+        val buttonBook = view.findViewById<Button>(R.id.BookBtn)
 
         roomtitle.text = param1
         roomcap.text = "${param2.toString()} Seats"
@@ -92,7 +124,59 @@ class RoomBookFragment : Fragment() {
                 roomimage.setImageBitmap(imageresult)
             }
         }
+        /*val cal = Calendar.getInstance()
+
+        val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
+            cal.set(Calendar.HOUR_OF_DAY, hour)
+            cal.set(Calendar.MINUTE, minute)
+
+            startTimePick.text = SimpleDateFormat("HH:mm").format(cal.time)
+        }*/
+
+        //Menentukan waktu mulai meeting
+        startTimePick.setOnClickListener {
+            //TimePickerDialog(context, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+            var timePicker = TimePicker("start")
+            timePicker.show(this.childFragmentManager, "time")
+        }
+
+        //Menentukan waktu selesai Meeting
+        endTimePick.setOnClickListener {
+            //TimePickerDialog(context, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+            var timePicker = TimePicker("end")
+            timePicker.show(this.childFragmentManager, "time")
+        }
+
+        //Menjalankan Service dengan Intent
+        var MeetingService = Intent(activity, MeetingProgressService::class.java)
+
+        //Button Book diklik, jalankan Intent
+        buttonBook.setOnClickListener {
+            //Menghitung durasi meeting
+            var beginHour = startTimePick.text.substring(0,2).toInt()
+            var beginMin = startTimePick.text.substring(3,5).toInt()
+            var endHour = endTimePick.text.substring(0,2).toInt()
+            var endMin = endTimePick.text.substring(3,5).toInt()
+            var duration: Long = ((endHour*3600 + endMin*60) - (beginHour*3600 + beginMin*60)).toLong()
+
+            //Kirimkan durasi ke service
+            MeetingService.putExtra(EXTRA_MEETING_DURATION,duration)
+            Toast.makeText(activity, "Meeting Started", Toast.LENGTH_SHORT).show()
+
+            //Jalankan intent dengan enqueueWork
+            MeetingProgressService.enqueueWork(activity!!, MeetingService)
+        }
+        //Menangkap broadcast untuk diproses dengan menentukan filter (ketika broadcast melewati Action_meeting) dan receivernya
+        var filterMeetingProgress = IntentFilter(ACTION_MEETING)
+        requireActivity().registerReceiver(meetingProgressReceiver, filterMeetingProgress)
+
         return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //Lakukan unregister agar proses yang dilakukan tidak memakan banyak memory
+        requireActivity().unregisterReceiver(meetingProgressReceiver)
     }
     //Function to Convert String into Image (bitmap)
     fun decodeStrImg (param3:String?): Bitmap? {
