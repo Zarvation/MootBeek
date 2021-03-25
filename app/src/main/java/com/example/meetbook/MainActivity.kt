@@ -1,6 +1,7 @@
 package com.example.meetbook
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -24,6 +25,10 @@ class MainActivity : AppCompatActivity() {
         RegisText.setOnClickListener { // Ketika Register diklik, terjadi pemindahan screen dari MainActivity ke RegisterActivity
             var IntentToRegis = Intent(this,RegisterActivity::class.java)
             startActivity(IntentToRegis)
+        }
+        var receiver= AirplaneModeReceiver()
+        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also{
+            registerReceiver(receiver,it)
         }
     }
 
