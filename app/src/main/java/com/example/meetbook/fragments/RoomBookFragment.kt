@@ -1,5 +1,8 @@
 package com.example.meetbook.fragments
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.TimePickerDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,21 +10,22 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.icu.text.DateFormat
 import android.icu.text.SimpleDateFormat
 import android.media.Image
+import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.FragmentActivity
 import com.example.meetbook.*
+import com.example.meetbook.TimePicker
 import kotlinx.android.synthetic.main.fragment_room_book.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -45,6 +49,14 @@ class RoomBookFragment : Fragment() {
     private var param1: String? = null
     private var param2: Int? = null
     private var param3: String? = null
+    //inisialisasi notification manager, notification channel,
+    //dan builder untuk membuat dan menjalankan notifikasi
+    lateinit var notificationManager: NotificationManager
+    lateinit var notificationChannel: NotificationChannel
+    lateinit var builder: Notification.Builder
+    //buat channelID
+    private val channelId = "com.example.meetbook345"
+    private val description = "Finished Notification"
 
     //Pengirim dengan Getter dan Setter
         /*
@@ -70,6 +82,10 @@ class RoomBookFragment : Fragment() {
     //Broadcast
     private val meetingProgressReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
+            //Notifikasi akan bekerja sebagai service, sehingga dapat dijalankan
+            //walaupun aplikasi dalam keadaan tertutup
+            notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
             //Mengambil persen durasi
             var meeting_percentage = intent?.getIntExtra(EXTRA_MEETING_PERCENTAGE, 0)
             //mengambil status selesai
@@ -81,6 +97,34 @@ class RoomBookFragment : Fragment() {
             //Jika selesai, jalankan toast
             if (meeting_finish!!){
                 Toast.makeText(activity, "Meeting Finished", Toast.LENGTH_SHORT).show()
+
+                //Mengakses layout untuk custom notification
+                val contentView = RemoteViews(context!!.packageName, R.layout.meeting_notification_finish_layout)
+                //Set title dan content yang ada di layout custom notification
+                contentView.setTextViewText(R.id.tv_title, "Meeting Finished")
+                contentView.setTextViewText(R.id.tv_content, "You have reached time limit !!!")
+                //Melakukan pengecekan versi diatas oreo, untuk membentuk notification
+                //channel berdasarkan channelId
+                //sehingga setiap notifikasi dapat dibedakan satu dengan yang lain
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    //Buat notification Channel
+                    notificationChannel = NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
+                    notificationChannel.enableLights(true)
+                    notificationChannel.lightColor = Color.BLUE
+                    notificationChannel.enableVibration(true)
+                    notificationManager.createNotificationChannel(notificationChannel)
+
+                    //Buat notifikasi dengan memasukkan custom layout yang telah dibuat
+                    builder = Notification.Builder(activity, channelId)
+                            .setContent(contentView) //set notifikasi dengan custom layout
+                            .setSmallIcon(R.drawable.meetroom1)
+                }else{ //Bila dibawah versi oreo
+                    builder = Notification.Builder(activity)
+                            .setContent(contentView) //set notifikasi dengan custom layout
+                            .setSmallIcon(R.drawable.meetroom1)
+                }
+                //Tampilkan notifikasi
+                notificationManager?.notify(EXTRA_NOTIFICATION_MEETING,builder.build())
             }
         }
 
