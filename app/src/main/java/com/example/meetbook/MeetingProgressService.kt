@@ -1,8 +1,6 @@
 package com.example.meetbook
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -13,6 +11,7 @@ import android.widget.Toast
 import androidx.core.app.JobIntentService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.example.meetbook.fragments.RoomBookFragment
 
 class MeetingProgressService : JobIntentService() {
     //inisialisasi notification manager, notification channel,
@@ -37,7 +36,10 @@ class MeetingProgressService : JobIntentService() {
                 notificationChannel.enableLights(true)
                 notificationChannel.lightColor = Color.BLUE
                 notificationChannel.enableVibration(true)
+                notificationChannel.setShowBadge(true)
                 notificationManager.createNotificationChannel(notificationChannel)
+
+                //val intent = Intent(this, RoomBookFragment::class.java)
 
                 //Buat notifikasi dengan memasukkan title, content dan icon
                 builder = Notification.Builder(this, channelId)

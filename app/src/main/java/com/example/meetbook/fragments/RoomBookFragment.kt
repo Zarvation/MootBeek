@@ -112,6 +112,7 @@ class RoomBookFragment : Fragment() {
                     notificationChannel.enableLights(true)
                     notificationChannel.lightColor = Color.BLUE
                     notificationChannel.enableVibration(true)
+                    notificationChannel.setShowBadge(true)
                     notificationManager.createNotificationChannel(notificationChannel)
 
                     //Buat notifikasi dengan memasukkan custom layout yang telah dibuat
