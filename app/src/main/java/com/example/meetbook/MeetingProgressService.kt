@@ -16,21 +16,21 @@ import com.example.meetbook.fragments.RoomBookFragment
 class MeetingProgressService : JobIntentService() {
     //inisialisasi notification manager, notification channel,
     //dan builder untuk membuat dan menjalankan notifikasi
-    lateinit var notificationManager: NotificationManager
-    lateinit var notificationChannel: NotificationChannel
-    lateinit var builder: Notification.Builder
+    //lateinit var notificationManager: NotificationManager
+    //lateinit var notificationChannel: NotificationChannel
+    //lateinit var builder: Notification.Builder
     //buat channelID
-    private val channelId = "com.example.meetbook123"
-    private val description = "Start Notification"
+    //private val channelId = "com.example.meetbook123"
+    //private val description = "Start Notification"
     override fun onHandleWork(intent: Intent) {
         //Notifikasi akan bekerja sebagai service, sehingga dapat dijalankan
         //walaupun aplikasi dalam keadaan tertutup
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        //notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if(intent!=null){
             //Melakukan pengecekan versi diatas oreo, untuk membentuk notification
             //channel berdasarkan channelId
             //sehingga setiap notifikasi dapat dibedakan satu dengan yang lain
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 //Buat notification Channel
                 notificationChannel = NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
                 notificationChannel.enableLights(true)
@@ -57,7 +57,7 @@ class MeetingProgressService : JobIntentService() {
                         .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.drawable.alarmclock))
             }
             //Tampilkan notifikasi
-            notificationManager?.notify(EXTRA_NOTIFICATION_MEETING,builder.build())
+            notificationManager?.notify(EXTRA_NOTIFICATION_MEETING,builder.build())*/
 
             var meetingProgress = 0
             //Ambil durasi dari extra yang telah dikirimkan

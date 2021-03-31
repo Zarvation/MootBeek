@@ -1,9 +1,6 @@
 package com.example.meetbook.fragments
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.TimePickerDialog
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,7 +10,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.icu.text.DateFormat
 import android.icu.text.SimpleDateFormat
+import android.media.AudioAttributes
 import android.media.Image
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64
@@ -54,9 +53,8 @@ class RoomBookFragment : Fragment() {
     lateinit var notificationManager: NotificationManager
     lateinit var notificationChannel: NotificationChannel
     lateinit var builder: Notification.Builder
-    //buat channelID
-    private val channelId = "com.example.meetbook345"
-    private val description = "Finished Notification"
+    //deklarasi channelID
+    lateinit var channelId: String
 
     //Pengirim dengan Getter dan Setter
         /*
@@ -82,10 +80,6 @@ class RoomBookFragment : Fragment() {
     //Broadcast
     private val meetingProgressReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            //Notifikasi akan bekerja sebagai service, sehingga dapat dijalankan
-            //walaupun aplikasi dalam keadaan tertutup
-            notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
             //Mengambil persen durasi
             var meeting_percentage = intent?.getIntExtra(EXTRA_MEETING_PERCENTAGE, 0)
             //mengambil status selesai
@@ -103,26 +97,28 @@ class RoomBookFragment : Fragment() {
                 //Set title dan content yang ada di layout custom notification
                 contentView.setTextViewText(R.id.tv_title, "Meeting Finished")
                 contentView.setTextViewText(R.id.tv_content, "You have reached time limit !!!")
-                //Melakukan pengecekan versi diatas oreo, untuk membentuk notification
-                //channel berdasarkan channelId
+
+                val intentBack = Intent(activity, HomeActivity::class.java)
+                val pendingIntentBack: PendingIntent = PendingIntent.getActivity(activity, 0, intentBack, 0)
+
+                //Melakukan pengecekan versi diatas oreo, untuk build notification channel
+                //berdasarkan channelId
                 //sehingga setiap notifikasi dapat dibedakan satu dengan yang lain
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    //Buat notification Channel
-                    notificationChannel = NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
-                    notificationChannel.enableLights(true)
-                    notificationChannel.lightColor = Color.BLUE
-                    notificationChannel.enableVibration(true)
-                    notificationChannel.setShowBadge(true)
-                    notificationManager.createNotificationChannel(notificationChannel)
-
+                    //Set channelID untuk meeting selesai
+                    channelId = ID_CHANNEL_FINISH
                     //Buat notifikasi dengan memasukkan custom layout yang telah dibuat
                     builder = Notification.Builder(activity, channelId)
                             .setContent(contentView) //set notifikasi dengan custom layout
                             .setSmallIcon(R.drawable.meetroom1)
+                            .setGroup(ID_GROUP_FINISH) //Set group untuk notifikasi,
+                                                    //dalam hal ini, meeting finish
+                            .setContentIntent(pendingIntentBack)
                 }else{ //Bila dibawah versi oreo
                     builder = Notification.Builder(activity)
                             .setContent(contentView) //set notifikasi dengan custom layout
                             .setSmallIcon(R.drawable.meetroom1)
+                            .setGroup(ID_GROUP_FINISH)
                 }
                 //Tampilkan notifikasi
                 notificationManager?.notify(EXTRA_NOTIFICATION_MEETING,builder.build())
@@ -139,6 +135,14 @@ class RoomBookFragment : Fragment() {
             param2 = it.getInt(ARG_GET_ROOM_CAP)
             param3 = it.getString(ARG_GET_ROOM_IMAGE)
         }
+
+        //Notifikasi akan bekerja sebagai service, sehingga dapat dijalankan
+        //walaupun aplikasi dalam keadaan tertutup
+        notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE)
+                as NotificationManager
+        //Mulai fungsi createNotificationGroup dan createNotificationChannels
+        createNotificationGroup()
+        createNotificationChannels()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -208,6 +212,36 @@ class RoomBookFragment : Fragment() {
             MeetingService.putExtra(EXTRA_MEETING_DURATION,duration)
             Toast.makeText(activity, "Meeting Started", Toast.LENGTH_SHORT).show()
 
+            //Melakukan pengecekan versi diatas oreo, untuk build notification channel
+            //berdasarkan channelId
+            //sehingga setiap notifikasi dapat dibedakan satu dengan yang lain
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //Set ChannelID untuk meeting start
+                channelId = ID_CHANNEL_START
+                val intent = Intent(this.activity, HomeActivity::class.java)
+                val pendingIntent: PendingIntent = PendingIntent.getActivity(this.activity, 0, intent, 0)
+
+                //Buat notifikasi dengan memasukkan title, content dan icon
+                builder = Notification.Builder(activity, channelId)
+                        .setContentTitle("Meeting Started")
+                        .setContentText("Attend the meeting !!!")
+                        .setShowWhen(true)
+                        .setGroup(ID_GROUP_START) //Set group meeting start
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.drawable.alarmclock)
+                        .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.drawable.alarmclock))
+            }else{ //Bila dibawah versi oreo
+                builder = Notification.Builder(activity)
+                        .setContentTitle("Meeting Started")
+                        .setContentText("Attend the meeting !!!")
+                        .setShowWhen(true)
+                        .setGroup(ID_GROUP_START) //Set group meeting start
+                        .setSmallIcon(R.drawable.alarmclock)
+                        .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.drawable.alarmclock))
+            }
+            //Tampilkan notifikasi
+            notificationManager?.notify(EXTRA_NOTIFICATION_MEETING,builder.build())
+
             //Jalankan intent dengan enqueueWork
             MeetingProgressService.enqueueWork(activity!!, MeetingService)
         }
@@ -228,6 +262,60 @@ class RoomBookFragment : Fragment() {
         val imageBytes = Base64.decode(param3, Base64.DEFAULT)
         val decodeImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         return decodeImage
+    }
+
+    private fun createNotificationGroup() {
+        //memastikan android adalah android Oreo dan mendaftarkan
+        //2 grup berbeda untuk notification
+        //jika ada grup berbeda, anda dapat menambahkan list
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val list = mutableListOf<NotificationChannelGroup>()
+            list.add(NotificationChannelGroup(ID_GROUP_START,
+                    "Start"))
+            list.add(NotificationChannelGroup(ID_GROUP_FINISH,
+                    "Finish"))
+            notificationManager!!.createNotificationChannelGroups(list)
+        }
+    }
+    private fun createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //Set ringtone dan audio
+            val notificationSound = RingtoneManager
+                    .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val att = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build()
+
+            //Membuat notification channel untuk meeting start
+            val ChannelStartMeeting = NotificationChannel(
+                    ID_CHANNEL_START,
+                    "Start",
+                    NotificationManager.IMPORTANCE_HIGH)
+            ChannelStartMeeting.group = ID_GROUP_START
+            ChannelStartMeeting.vibrationPattern =
+                    longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 100)
+            ChannelStartMeeting.setSound(notificationSound, att);
+            ChannelStartMeeting.setLightColor(Color.BLUE);
+            ChannelStartMeeting.enableLights(true)
+            ChannelStartMeeting.enableVibration(true)
+            ChannelStartMeeting.setShowBadge(true)
+
+            //Membuat notification channel untuk meeting finish
+            val ChannelFinishMeeting = NotificationChannel(
+                    ID_CHANNEL_FINISH,
+                    "Finish",
+                    NotificationManager.IMPORTANCE_HIGH)
+            ChannelFinishMeeting.enableLights(true)
+            ChannelFinishMeeting.enableVibration(true)
+            ChannelFinishMeeting.lightColor = Color.RED
+            ChannelFinishMeeting.group = ID_GROUP_FINISH
+            ChannelFinishMeeting.vibrationPattern =
+                    longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 100)
+
+            notificationManager?.createNotificationChannel(ChannelStartMeeting)
+            notificationManager?.createNotificationChannel(ChannelFinishMeeting)
+
+        }
     }
 
     companion object {
