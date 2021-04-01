@@ -227,7 +227,7 @@ class RoomBookFragment : Fragment() {
                         .setContentText("Attend the meeting !!!")
                         .setShowWhen(true)
                         .setGroup(ID_GROUP_START) //Set group meeting start
-                        .setContentIntent(pendingIntent)
+                        .addAction(0,"ATTEND",pendingIntent)
                         .setSmallIcon(R.drawable.alarmclock)
                         .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.drawable.alarmclock))
             }else{ //Bila dibawah versi oreo
