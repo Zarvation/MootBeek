@@ -1,10 +1,9 @@
 package com.example.meetbook.fragments
 
 import android.app.*
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.*
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -24,6 +23,7 @@ import android.widget.*
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.FragmentActivity
 import com.example.meetbook.*
+import com.example.meetbook.MeetingDuration.Companion.quote
 import com.example.meetbook.TimePicker
 import kotlinx.android.synthetic.main.fragment_room_book.*
 import org.jetbrains.anko.doAsync
@@ -56,6 +56,10 @@ class RoomBookFragment : Fragment() {
     //deklarasi channelID
     lateinit var channelId: String
 
+    var mAlarmManager : AlarmManager? = null
+    var mPendingIntent : PendingIntent? = null
+
+
     //Pengirim dengan Getter dan Setter
         /*
     var title : String = ""
@@ -78,7 +82,7 @@ class RoomBookFragment : Fragment() {
          */
 
     //Broadcast
-    private val meetingProgressReceiver = object : BroadcastReceiver(){
+    /*private val meetingProgressReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             //Mengambil persen durasi
             var meeting_percentage = intent?.getIntExtra(EXTRA_MEETING_PERCENTAGE, 0)
@@ -125,7 +129,7 @@ class RoomBookFragment : Fragment() {
             }
         }
 
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,11 +142,11 @@ class RoomBookFragment : Fragment() {
 
         //Notifikasi akan bekerja sebagai service, sehingga dapat dijalankan
         //walaupun aplikasi dalam keadaan tertutup
-        notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE)
-                as NotificationManager
+        //notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE)
+                //as NotificationManager
         //Mulai fungsi createNotificationGroup dan createNotificationChannels
-        createNotificationGroup()
-        createNotificationChannels()
+        //createNotificationGroup()
+        //createNotificationChannels()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -157,6 +161,7 @@ class RoomBookFragment : Fragment() {
         val startTimePick = view.findViewById<TextView>(R.id.StartTime)
         val endTimePick = view.findViewById<TextView>(R.id.EndTime)
         val buttonBook = view.findViewById<Button>(R.id.BookBtn)
+        val quotesText = view.findViewById<TextView>(R.id.Quotes)
 
         roomtitle.text = param1
         roomcap.text = "${param2.toString()} Seats"
@@ -197,8 +202,9 @@ class RoomBookFragment : Fragment() {
         }
 
         //Menjalankan Service dengan Intent
-        var MeetingService = Intent(activity, MeetingProgressService::class.java)
+        //var MeetingService = Intent(activity, MeetingProgressService::class.java)
 
+        mAlarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         //Button Book diklik, jalankan Intent
         buttonBook.setOnClickListener {
             //Menghitung durasi meeting
@@ -206,16 +212,58 @@ class RoomBookFragment : Fragment() {
             var beginMin = startTimePick.text.substring(3,5).toInt()
             var endHour = endTimePick.text.substring(0,2).toInt()
             var endMin = endTimePick.text.substring(3,5).toInt()
-            var duration: Long = ((endHour*3600 + endMin*60) - (beginHour*3600 + beginMin*60)).toLong()
+
+            val sdf = SimpleDateFormat("hh:mm")
+            val currentTime = sdf.format(android.icu.util.Calendar.getInstance().time)
+            var timeNow = currentTime.split(":")
+
+            if(mPendingIntent != null) {
+                mAlarmManager?.cancel(mPendingIntent)
+                mPendingIntent?.cancel()
+            }
+
+            var duration: Long = ((endHour*3600 + endMin*60) - (timeNow[0].toInt()*3600 + timeNow[1].toInt()*60)).toLong()
+            var jam = beginHour-timeNow[0].toInt()
+            var menit = beginMin-timeNow[1].toInt()
+            //var jamSelesai = endHour-timeNow[0].toInt()
+            //var menitSelesai = endMin-timeNow[1].toInt()
+
+            var alarmTimer = Calendar.getInstance()
+            alarmTimer.add(Calendar.HOUR_OF_DAY, jam)
+            alarmTimer.add(Calendar.MINUTE, menit)
+            alarmTimer.add(Calendar.SECOND, 0)
+
+            var sendIntent = Intent(activity, MeetingAlarmReceiver::class.java)
+            //sendIntent.putExtra(EXTRA_MEETING_DURATION, duration)
+
+            mPendingIntent = PendingIntent.getBroadcast(activity, 123, sendIntent, 0)
+
+            mAlarmManager?.set(AlarmManager.RTC, alarmTimer.timeInMillis, mPendingIntent)
+            //mAlarmManager?.setInexactRepeating(AlarmManager.RTC, alarmTimer.timeInMillis,AlarmManager.INTERVAL_FIFTEEN_MINUTES, mPendingIntent)
+            Toast.makeText(this.activity,"alarm made $duration",Toast.LENGTH_SHORT).show()
+
+            var serviceComponent = ComponentName(context!!,MeetingDuration::class.java)
+            var mJobInfo = JobInfo.Builder(123, serviceComponent)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresDeviceIdle(false)
+                    .setRequiresCharging(false)
+                    .setMinimumLatency(duration * 1000)
+                    .setOverrideDeadline(duration * 1000)
+            var JobMeeting = context!!.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+            JobMeeting.schedule(mJobInfo.build())
+            //Log.w("Job", "Mulai JOB")
+            Toast.makeText(context,"Job Service Berjalan", Toast.LENGTH_SHORT).show()
+
+            quotesText.text = "Do The Best"
 
             //Kirimkan durasi ke service
-            MeetingService.putExtra(EXTRA_MEETING_DURATION,duration)
-            Toast.makeText(activity, "Meeting Started", Toast.LENGTH_SHORT).show()
+            //MeetingService.putExtra(EXTRA_MEETING_DURATION,duration)
+            //Toast.makeText(activity, "Meeting Started", Toast.LENGTH_SHORT).show()
 
             //Melakukan pengecekan versi diatas oreo, untuk build notification channel
             //berdasarkan channelId
             //sehingga setiap notifikasi dapat dibedakan satu dengan yang lain
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 //Set ChannelID untuk meeting start
                 channelId = ID_CHANNEL_START
                 val intent = Intent(this.activity, HomeActivity::class.java)
@@ -243,20 +291,20 @@ class RoomBookFragment : Fragment() {
             notificationManager?.notify(EXTRA_NOTIFICATION_MEETING,builder.build())
 
             //Jalankan intent dengan enqueueWork
-            MeetingProgressService.enqueueWork(activity!!, MeetingService)
+            MeetingProgressService.enqueueWork(activity!!, MeetingService)*/
         }
         //Menangkap broadcast untuk diproses dengan menentukan filter (ketika broadcast melewati Action_meeting) dan receivernya
-        var filterMeetingProgress = IntentFilter(ACTION_MEETING)
-        requireActivity().registerReceiver(meetingProgressReceiver, filterMeetingProgress)
+        //var filterMeetingProgress = IntentFilter(ACTION_MEETING)
+        //requireActivity().registerReceiver(meetingProgressReceiver, filterMeetingProgress)
 
         return view
     }
 
-    override fun onDestroy() {
+    /*override fun onDestroy() {
         super.onDestroy()
         //Lakukan unregister agar proses yang dilakukan tidak memakan banyak memory
         requireActivity().unregisterReceiver(meetingProgressReceiver)
-    }
+    }*/
     //Function to Convert String into Image (bitmap)
     fun decodeStrImg (param3:String?): Bitmap? {
         val imageBytes = Base64.decode(param3, Base64.DEFAULT)
