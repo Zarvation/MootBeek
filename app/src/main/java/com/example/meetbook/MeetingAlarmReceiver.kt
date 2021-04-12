@@ -31,7 +31,10 @@ class MeetingAlarmReceiver : BroadcastReceiver() {
         //var duration: Long = intent.getLongExtra(EXTRA_MEETING_DURATION, 0L)
 
         val intent = Intent(context, HomeActivity::class.java)
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent = TaskStackBuilder.create(context)
+                .addNextIntentWithParentStack(intent)
+                .getPendingIntent(111,PendingIntent.FLAG_UPDATE_CURRENT)
+        //val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
         var mBuilder = Notification.Builder(context, ChannelID)
                 .setContentTitle("Meeting Started")
