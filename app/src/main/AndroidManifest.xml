@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity"
-            android:parentActivityName=".MainActivity"/>
+            />
         <activity android:name=".RegisterActivity"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".MainActivity">

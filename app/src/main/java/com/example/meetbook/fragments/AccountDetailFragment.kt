@@ -35,6 +35,7 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
 
     var DisplayName = ContactsContract.Contacts.DISPLAY_NAME
     var Number = ContactsContract.CommonDataKinds.Phone.NUMBER
+    //var Image = ContactsContract.CommonDataKinds.Photo.PHOTO
     var ContactList : MutableList<Contact> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +94,9 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
             while(!data.isAfterLast){
                 ContactList.add(Contact(
                     data.getString(data.getColumnIndex(DisplayName)),
-                    data.getString(data.getColumnIndex(Number)))
+                    data.getString(data.getColumnIndex(Number))
+                        //,data.getInt(data.getColumnIndex(Image))
+                )
                 )
                 data.moveToNext()
             }

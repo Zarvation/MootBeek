@@ -18,6 +18,7 @@ class ContactListRecyclerViewAdapter(data : MutableList<Contact>) : RecyclerView
         val contactName = itemView.ContactName
         val contactNumber = itemView.PhoneNumber
         val buttonShare = itemView.buttonShare
+        //val contactphoto = itemView.DisplayPhoto
         var context = itemView.getContext()
 
         fun bindContact(tmp: Contact){
