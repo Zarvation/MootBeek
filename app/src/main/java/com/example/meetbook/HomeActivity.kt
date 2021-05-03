@@ -5,10 +5,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.example.meetbook.fragments.AccountDetailFragment
-import com.example.meetbook.fragments.InterfaceData
-import com.example.meetbook.fragments.RoomBookFragment
-import com.example.meetbook.fragments.RoomListFragment
+import com.example.meetbook.fragments.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_home.*
 
@@ -57,5 +54,22 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         transaksi.replace(R.id.fragmentContainer, fragmentBook)
         transaksi.addToBackStack(null)
         transaksi.commit()
+    }
+
+    override fun sendBookedRoomData(
+        title: String,
+        capacity: Int,
+        image: String,
+        beginHour: Int,
+        endHour: Int,
+        beginMin: Int,
+        endMin: Int
+    ) {
+        val fragmentBooked = BookedRoomFragment.newInstance(title,capacity,image,beginHour,endHour,beginMin,endMin)
+
+        val transaksi2 = this.supportFragmentManager.beginTransaction()
+        transaksi2.replace(R.id.fragmentContainer, fragmentBooked)
+        transaksi2.addToBackStack(null)
+        transaksi2.commit()
     }
 }
