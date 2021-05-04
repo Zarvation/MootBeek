@@ -19,6 +19,7 @@ import org.json.JSONObject
 
 class MeetingDuration : JobService() {
     var ArrayItems : ByteArray? = null
+    private val PrefFileName = "ROOMFILE001"
     override fun onStartJob(params: JobParameters?): Boolean {
         getQuotes(params)
 
@@ -26,6 +27,8 @@ class MeetingDuration : JobService() {
     }
     private fun doNotif(quotes : String, author : String){
         Thread(Runnable {
+            var roomSharedPrefHelper = SharedPrefHelper(this, PrefFileName)
+            roomSharedPrefHelper.clearValues()
             val NotifyID = EXTRA_NOTIFICATION_MEETING
             val ChannelID = ID_CHANNEL_FINISH
             val name = "Meeting End"
