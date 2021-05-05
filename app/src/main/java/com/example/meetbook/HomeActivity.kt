@@ -56,6 +56,7 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         transaksi.commit()
     }
 
+    // Mengoverride fungsi sendBookedRoomData
     override fun sendBookedRoomData(
         title: String,
         capacity: Int,
@@ -65,8 +66,10 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         beginMin: Int,
         endMin: Int
     ) {
+        // Kirim data booked room ke fragment BookedRoom lewat newInstance
         val fragmentBooked = BookedRoomFragment.newInstance(title,capacity,image,beginHour,endHour,beginMin,endMin)
 
+        // Mulai fragment BookedRoom
         val transaksi2 = this.supportFragmentManager.beginTransaction()
         transaksi2.replace(R.id.fragmentContainer, fragmentBooked)
         transaksi2.addToBackStack(null)

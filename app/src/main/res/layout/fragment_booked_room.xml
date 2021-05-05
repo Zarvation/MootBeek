@@ -10,68 +10,80 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginHorizontal="10dp">
-    <TextView
-        android:id="@+id/BookMeetRoomTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/caviardreamsbold"
-        android:text="Room 1A"
-        android:textColor="@color/black"
-        android:textSize="18dp" />
-
-    <TextView
-        android:id="@+id/BookMeetRoomCap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/caviardreams"
-        android:text="8 Seats"
-        android:textColor="@color/black"
-        android:textSize="14dp" />
-
-    <ImageView
-        android:id="@+id/BookMeetRoomImg"
-        android:layout_width="600dp"
-        android:layout_height="260dp"
-        android:layout_gravity="center"
-        />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginVertical="10dp"
-        android:gravity="center">
         <TextView
-            android:id="@+id/StartTime"
+            android:id="@+id/BookMeetRoomTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
-            android:inputType="time"
-            android:layout_marginHorizontal="30dp"
             android:fontFamily="@font/caviardreamsbold"
+            android:text="Room 1A"
             android:textColor="@color/black"
-            android:textSize="18dp"
-            android:clickable="true"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/BookMeetRoomCap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/caviardreams"
+            android:text="8 Seats"
+            android:textColor="@color/black"
+            android:textSize="14dp" />
+
+        <ImageView
+            android:id="@+id/BookMeetRoomImg"
+            android:layout_width="600dp"
+            android:layout_height="260dp"
+            android:layout_gravity="center"
             />
-        <TextView
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginVertical="10dp"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/StartTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:inputType="time"
+                android:layout_marginHorizontal="30dp"
+                android:fontFamily="@font/caviardreamsbold"
+                android:textColor="@color/black"
+                android:textSize="18dp"
+                android:clickable="true"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:fontFamily="@font/caviardreamsbold"
+                android:textColor="@color/black"
+                android:textSize="18dp"/>
+            <TextView
+                android:id="@+id/EndTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:inputType="time"
+                android:layout_marginHorizontal="30dp"
+                android:fontFamily="@font/caviardreamsbold"
+                android:textColor="@color/black"
+                android:textSize="18dp"
+                android:clickable="true"
+                />
+        </LinearLayout>
+        <Button
+            android:id="@+id/mediaPlayerSTART"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="-"
-            android:fontFamily="@font/caviardreamsbold"
-            android:textColor="@color/black"
-            android:textSize="18dp"/>
-        <TextView
-            android:id="@+id/EndTime"
+            android:layout_gravity="center"
+            android:text="Play Song"/>
+        <Button
+            android:id="@+id/mediaPlayerSTOP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
-            android:inputType="time"
-            android:layout_marginHorizontal="30dp"
-            android:fontFamily="@font/caviardreamsbold"
-            android:textColor="@color/black"
-            android:textSize="18dp"
-            android:clickable="true"
-            />
-    </LinearLayout>
+            android:layout_gravity="center"
+            android:text="Stop Song"/>
     </LinearLayout>
 </FrameLayout>

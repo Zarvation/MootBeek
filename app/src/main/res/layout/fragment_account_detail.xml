@@ -36,6 +36,7 @@
         app:layout_constraintVertical_bias="0.6"
         tools:layout_editor_absoluteX="10dp" />
 
+<!--    // Buat View untuk data yang tersimpan di sharedpreferences-->
     <LinearLayout
         android:id="@+id/bookedRoomView"
         android:layout_width="match_parent"

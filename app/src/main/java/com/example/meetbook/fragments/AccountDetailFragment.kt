@@ -37,6 +37,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
+    // Inisialisasi Filename untuk SharedPreferences
     private val PrefFileName = "ROOMFILE001"
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -76,15 +77,23 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
         //tambahkan interfacedata dengan aktivitas dari interfaceData
         interfaceData = activity as InterfaceData
 
+        // Inisialisasi SharedPreferences yang telah dibuat dengan filename
         var roomSharedPrefHelper = SharedPrefHelper(context!!, PrefFileName)
+
+        // Get / Ambil data dari file SharedPreferences
+        // Mengambil nama room
         var getTitle = roomSharedPrefHelper.name
+        // Mengambil kapasitas room
         var getCap = roomSharedPrefHelper.cap
+        // Mengambil string image room
         var getImg = roomSharedPrefHelper.image
+        // Mengambil waktu awal dan waktu akhir meeting room
         var getBegHour = roomSharedPrefHelper.beginHour
         var getEndHour = roomSharedPrefHelper.endHour
         var getBegMin = roomSharedPrefHelper.beginMin
         var getEndMin = roomSharedPrefHelper.endMin
 
+        // data yang telah diambil akan ditampilkan ke view
         roomName.setText(getTitle)
         roomCap.text = "${getCap} Seats"
         doAsync{
@@ -103,8 +112,11 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
             current.text = "1 Room Currently Booked"
         }
 
+        // Ketika View di klik, data akan dikirimkan ke fungsi interfaceData untuk ditampilkan semua
         bookedRoom.setOnClickListener {
-            interfaceData.sendBookedRoomData(getTitle.toString(),getCap.toString().toInt(),getImg.toString(),getBegHour.toString().toInt(),getEndHour.toString().toInt(),getBegMin.toString().toInt(),getEndMin.toString().toInt())
+            interfaceData.sendBookedRoomData(getTitle.toString(),getCap.toString().toInt(),
+                getImg.toString(),getBegHour.toString().toInt(),getEndHour.toString().toInt(),
+                getBegMin.toString().toInt(),getEndMin.toString().toInt())
         }
 
         return view

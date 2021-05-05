@@ -44,6 +44,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class RoomBookFragment : Fragment() {
+    // Inisialisasi Filename untuk SharedPreferences
     private val PrefFileName = "ROOMFILE001"
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -214,10 +215,20 @@ class RoomBookFragment : Fragment() {
             var endHour = endTimePick.text.substring(0,2).toInt()
             var endMin = endTimePick.text.substring(3,5).toInt()
 
+            // Ketika button Book di klik
+            // Inisialisasi SharedPreferences yang telah dibuat
             var roomSharedPrefHelper = SharedPrefHelper(context!!, PrefFileName)
+            // Ubah informasi file sharedpreferences menjadi informasi yang akan dikirimkan
+            // set name dengan param1 (nama room)
             roomSharedPrefHelper.name = param1
+            // set cap dengan param2 (kapasitas room)
             roomSharedPrefHelper.cap = param2.toString().toInt()
+            // set image dengan param3 (string image room)
             roomSharedPrefHelper.image = param3
+            // set beginHour dengan jam awal
+            // set beginMin dengan menit awal
+            // set endHour dengan jam selesai
+            // set endMin dengan menit selesai
             roomSharedPrefHelper.beginHour = beginHour
             roomSharedPrefHelper.beginMin = beginMin
             roomSharedPrefHelper.endHour = endHour
