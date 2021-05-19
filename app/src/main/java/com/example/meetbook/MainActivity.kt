@@ -13,7 +13,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    //private val PrefFileName = "ROOMFILE001"
+    private val PrefFileName = "ROOMFILE001"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,8 +27,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this,"Password Belum Diisi",Toast.LENGTH_SHORT).show()
             }
             else{
-                //var roomSharedPrefHelper = SharedPrefHelper(this, PrefFileName)
-                //roomSharedPrefHelper.clearValues()
+                var roomSharedPrefHelper = SharedPrefHelper(this, PrefFileName)
+                roomSharedPrefHelper.clearValues()
                 var client = Client(LUsername.text.toString(), LPassword.text.toString())
                 IntentToHome.putExtra(EXTRA_CLIENT_DATA,client) // Mengirim Extra dengan key yang tersimpan di Keys.kt
                 startActivity(IntentToHome)

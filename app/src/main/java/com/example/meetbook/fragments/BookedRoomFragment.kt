@@ -1,20 +1,31 @@
 package com.example.meetbook.fragments
 
+import android.Manifest
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Environment
+import android.os.storage.StorageManager
 import android.util.Base64
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import com.example.meetbook.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.text.DecimalFormat
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -82,6 +93,7 @@ class BookedRoomFragment : Fragment() {
         val endtime = view.findViewById<TextView>(R.id.EndTime)
         val buttonStart = view.findViewById<Button>(R.id.mediaPlayerSTART)
         val buttonStop = view.findViewById<Button>(R.id.mediaPlayerSTOP)
+        val buttonSave = view.findViewById<Button>(R.id.saveMeeting)
 
         roomName.text = paramTitle
         roomCap.text = "${paramCap.toString()} Seats"
@@ -91,8 +103,27 @@ class BookedRoomFragment : Fragment() {
                 roomImage.setImageBitmap(imageresult)
             }
         }
-        begintime.text = "${paramSH.toString()}:${paramSM.toString()}"
-        endtime.text = "${paramEH.toString()}:${paramEM.toString()}"
+        var dec = DecimalFormat("00")
+        begintime.text = "${dec.format(paramSH)}:${dec.format(paramSM)}"
+        endtime.text = "${dec.format(paramEH)}:${dec.format(paramEM)}"
+
+        buttonSave.setOnClickListener {
+            var BuilderDialog = AlertDialog.Builder(context!!)
+            var inflaterDialog = layoutInflater.inflate(R.layout.save_meeting,null)
+            BuilderDialog.setView(inflaterDialog)
+            BuilderDialog.setPositiveButton("Save"){ dialogInterface: DialogInterface, i: Int ->
+                var getTitle = inflaterDialog.findViewById<EditText>(R.id.meetingTitle)
+                if(isExternalStorageReadable()){
+                    saveFileExternal(getTitle.text.toString())
+                }
+            }
+            BuilderDialog.setNeutralButton("Check Storage"){dialogInterface: DialogInterface, i: Int ->
+                if(isExternalStorageReadable()){
+                    checkStorage()
+                }
+            }
+            BuilderDialog.create().show()
+        }
 
         // Ketika Button Play di klik
         buttonStart.setOnClickListener {
@@ -132,6 +163,64 @@ class BookedRoomFragment : Fragment() {
 
         return view
     }
+
+    private fun saveFileExternal(title:String) {
+        var myDir = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)?.toURI())
+        if(!myDir.exists()){
+            myDir.mkdir()
+        }
+        File(myDir, "SavedMeeting.txt").apply {
+            appendText("${title} ${paramTitle} ${paramCap} ${paramSH} ${paramEH} ${paramSM} ${paramEM}\n")
+        }
+        Toast.makeText(context!!, "Meeting Saved", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun checkStorage() {
+        val NUM_BYTES_NEEDED_FOR_MY_APP = 1024 * 1024 * 10L
+        val storageManager = requireContext().applicationContext.getSystemService<StorageManager>()!!
+        val appSpecificInternalDirUuid: UUID = storageManager.getUuidForPath(requireContext().filesDir)
+        val availableBytes: Long =
+                storageManager.getAllocatableBytes(appSpecificInternalDirUuid)
+        if (availableBytes < NUM_BYTES_NEEDED_FOR_MY_APP) {
+            Toast.makeText(context!!, "External Storage's Space < 10MB", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context!!, "External Storage's Space available : ${availableBytes/1048576} MB", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun isExternalStorageReadable(): Boolean{
+        if(ContextCompat.checkSelfPermission(
+                        context!!,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    5312)
+        }
+        var state = Environment.getExternalStorageState()
+        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
+        {
+            return true
+        }
+        return false
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        when (requestCode) {
+            5312 -> {
+                if ((grantResults.isNotEmpty() &&
+                                grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                ) {
+                    Toast.makeText(context!!, "Access Given", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     fun decodeStrImg (param3:String?): Bitmap? {
         val imageBytes = Base64.decode(param3, Base64.DEFAULT)
         val decodeImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)

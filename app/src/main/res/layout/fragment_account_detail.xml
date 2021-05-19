@@ -107,28 +107,90 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/ShareLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Share this app to your Friends"
-        android:textColor="@color/black"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewContactList"
-        app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
-        app:layout_constraintVertical_bias="0.935"
-        tools:layout_editor_absoluteX="10dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewContactList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <!--<ScrollView
+        android:id="@+id/historyListScroll"
+        android:layout_width="412dp"
+        android:layout_height="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
-        app:layout_constraintVertical_bias="0.519" />
+        app:layout_constraintVertical_bias="0.422">-->
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
+        app:layout_constraintVertical_bias="0.089">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="History"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.044"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
+            app:layout_constraintVertical_bias="0.066" />
+        <Button
+            android:id="@+id/clearHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear History"
+            android:layout_marginHorizontal="10dp"/>
+        <Button
+            android:id="@+id/savedRoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Saved Room"
+            android:layout_marginHorizontal="10dp"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/historyList"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="0.213"
+        tools:layout_editor_absoluteX="0dp" />
+    <!--</ScrollView>-->
+
+    <!--<TextView
+            android:id="@+id/ShareLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Share this app to your Friends"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerViewContactList"
+            app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
+            app:layout_constraintVertical_bias="1.0"
+            tools:layout_editor_absoluteX="9dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewContactList"
+            android:layout_width="412dp"
+            android:layout_height="101dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
+            app:layout_constraintVertical_bias="0.617" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -75,4 +75,12 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         transaksi2.addToBackStack(null)
         transaksi2.commit()
     }
+
+    override fun openSavedRoomData() {
+        val fragmentSaved = SavedMeetingFragment()
+        val transaksi3 = this.supportFragmentManager.beginTransaction()
+        transaksi3.replace(R.id.fragmentContainer, fragmentSaved)
+        transaksi3.addToBackStack(null)
+        transaksi3.commit()
+    }
 }

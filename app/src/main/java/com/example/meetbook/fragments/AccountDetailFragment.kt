@@ -12,9 +12,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
@@ -25,6 +23,9 @@ import kotlinx.android.synthetic.main.fragment_account_detail.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.w3c.dom.Text
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.text.DecimalFormat
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,18 +37,19 @@ private const val ARG_PARAM2 = "param2"
  * Use the [AccountDetailFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
+class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor>*/ {
     // Inisialisasi Filename untuk SharedPreferences
     private val PrefFileName = "ROOMFILE001"
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
-    var DisplayName = ContactsContract.Contacts.DISPLAY_NAME
-    var Number = ContactsContract.CommonDataKinds.Phone.NUMBER
+    //var DisplayName = ContactsContract.Contacts.DISPLAY_NAME
+    //var Number = ContactsContract.CommonDataKinds.Phone.NUMBER
     //var Image = ContactsContract.CommonDataKinds.Photo.PHOTO
-    var ContactList : MutableList<Contact> = ArrayList()
-
+    //var ContactList : MutableList<Contact> = ArrayList()
+    lateinit var historyAdapter : ArrayAdapter<String>
+    var history  : MutableList<String> = mutableListOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +57,10 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
             param1 = it.getString(ARG_CLIENT_NAME)
         }
 
-        LoaderManager.getInstance(this).initLoader(1,null,this)
+        //LoaderManager.getInstance(this).initLoader(1,null,this)
     }
+
+
 
     private lateinit var ContactListdapter : ContactListRecyclerViewAdapter
     private lateinit var interfaceData: InterfaceData
@@ -70,6 +74,9 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
         val roomCap = view.findViewById<TextView>(R.id.MeetRoomCap)
         val roomImage = view.findViewById<ImageView>(R.id.MeetRoomImg)
         val bookedRoom = view.findViewById<LinearLayout>(R.id.bookedRoomView)
+        val historylistview = view.findViewById<ListView>(R.id.historyList)
+        val historyclear = view.findViewById<Button>(R.id.clearHistory)
+        val savedroom = view.findViewById<Button>(R.id.savedRoom)
         //val recyclerviewget = view.findViewById<RecyclerView>(R.id.recyclerViewContactList)
 
         //Menerima isi argument
@@ -119,7 +126,50 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
                 getBegMin.toString().toInt(),getEndMin.toString().toInt())
         }
 
+        historyclear.setOnClickListener {
+            delFile()
+        }
+
+        savedroom.setOnClickListener {
+            interfaceData.openSavedRoomData()
+        }
+
+        history.clear()
+        readHistoryFile()
+        historyAdapter = ArrayAdapter(context!!,android.R.layout.simple_list_item_1,history)
+        historylistview.adapter = historyAdapter
+
         return view
+    }
+
+    private fun readHistoryFile() {
+        var dec = DecimalFormat("00")
+        try{
+            var input = requireContext().openFileInput("History.txt").apply {
+                bufferedReader().useLines {
+                    for(text in it.toList()){
+                        var item = text.split(' ')
+                        history.add("Room ${item[1]} with duration : ${item[3]} seconds from ${dec.format(item[4].toInt())}:${dec.format(item[6].toInt())} to ${dec.format(item[5].toInt())}:${dec.format(item[7].toInt())}")
+                    }
+                }
+            }
+        }catch (e : FileNotFoundException){
+            Toast.makeText(context,"No History", Toast.LENGTH_SHORT).show()
+        }catch (e : IOException){
+            Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun delFile() {
+        if(requireContext().fileList().size!=0) {
+            for (i in requireContext().fileList())
+                requireContext().deleteFile(i)
+            history.clear()
+            Toast.makeText(context,"History Cleared", Toast.LENGTH_SHORT).show()
+            historyAdapter.notifyDataSetChanged()
+        }
+        else
+            Toast.makeText(context,"No History", Toast.LENGTH_SHORT).show()
     }
 
     fun decodeStrImg (param3:String?): Bitmap? {
@@ -147,7 +197,7 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
                 }
     }
 
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+    /*override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
         var ContactUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
         var Projection = arrayOf(DisplayName,Number)
         return CursorLoader(activity!!,ContactUri,Projection,null,null,"$DisplayName ASC")
@@ -174,5 +224,5 @@ class AccountDetailFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> 
 
     override fun onLoaderReset(loader: Loader<Cursor>) {
         recyclerViewContactList?.adapter?.notifyDataSetChanged()
-    }
+    }*/
 }

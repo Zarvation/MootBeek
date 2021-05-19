@@ -244,6 +244,10 @@ class RoomBookFragment : Fragment() {
             }
 
             var duration: Long = ((endHour*3600 + endMin*60) - (timeNow[0].toInt()*3600 + timeNow[1].toInt()*60)).toLong()
+
+            // Write History File
+            writeHistoryFile(param1!!,param2.toString(),duration,beginHour,beginMin,endHour,endMin)
+
             var jam = beginHour-timeNow[0].toInt()
             var menit = beginMin-timeNow[1].toInt()
             //var jamSelesai = endHour-timeNow[0].toInt()
@@ -319,6 +323,13 @@ class RoomBookFragment : Fragment() {
         //requireActivity().registerReceiver(meetingProgressReceiver, filterMeetingProgress)
 
         return view
+    }
+
+    private fun writeHistoryFile(name:String,cap:String,duration:Long,beginHour:Int,beginMin:Int,endHour:Int,endMin:Int) {
+        var output = requireContext().openFileOutput("History.txt",Context.MODE_APPEND).apply{
+            write(("${name} ${cap} ${duration} ${beginHour} ${endHour} ${beginMin} ${endMin}\n").toByteArray())
+            close()
+        }
     }
 
     /*override fun onDestroy() {
