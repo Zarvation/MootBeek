@@ -145,12 +145,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
             app:layout_constraintVertical_bias="0.066" />
+
+        <!-- Buat Button untuk clear history -->
         <Button
             android:id="@+id/clearHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Clear History"
             android:layout_marginHorizontal="10dp"/>
+        <!-- Buat button untuk melihat daftar room yang di simpan/save -->
         <Button
             android:id="@+id/savedRoom"
             android:layout_width="wrap_content"
@@ -159,6 +162,7 @@
             android:layout_marginHorizontal="10dp"/>
     </LinearLayout>
 
+    <!-- Buat Listview untuk menampilkan history meeting -->
     <ListView
         android:id="@+id/historyList"
         android:layout_width="match_parent"

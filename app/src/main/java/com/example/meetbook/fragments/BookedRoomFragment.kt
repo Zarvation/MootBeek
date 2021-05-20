@@ -93,6 +93,8 @@ class BookedRoomFragment : Fragment() {
         val endtime = view.findViewById<TextView>(R.id.EndTime)
         val buttonStart = view.findViewById<Button>(R.id.mediaPlayerSTART)
         val buttonStop = view.findViewById<Button>(R.id.mediaPlayerSTOP)
+
+        // Inisialisasi komponen button save
         val buttonSave = view.findViewById<Button>(R.id.saveMeeting)
 
         roomName.text = paramTitle
@@ -107,13 +109,19 @@ class BookedRoomFragment : Fragment() {
         begintime.text = "${dec.format(paramSH)}:${dec.format(paramSM)}"
         endtime.text = "${dec.format(paramEH)}:${dec.format(paramEM)}"
 
+        // Ketika button save diklik, buat dialog untuk save atau cek space
         buttonSave.setOnClickListener {
             var BuilderDialog = AlertDialog.Builder(context!!)
+            // Gunakan layout save_meeting.xml untuk dialog
             var inflaterDialog = layoutInflater.inflate(R.layout.save_meeting,null)
             BuilderDialog.setView(inflaterDialog)
+            // Jika button Save diklik
             BuilderDialog.setPositiveButton("Save"){ dialogInterface: DialogInterface, i: Int ->
+                // ambil isi text yang ada di editText layout dan mulai simpan file External
                 var getTitle = inflaterDialog.findViewById<EditText>(R.id.meetingTitle)
+                // Sebelum menyimpan, cek permission untuk mengakses external storage
                 if(isExternalStorageReadable()){
+                    // Jika izin diberikan, jalankan fungsi untuk menyimpan file
                     saveFileExternal(getTitle.text.toString())
                 }
             }
@@ -164,17 +172,22 @@ class BookedRoomFragment : Fragment() {
         return view
     }
 
+    // Buat fungsi untuk menyimpan file external
     private fun saveFileExternal(title:String) {
-        var myDir = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)?.toURI())
-        if(!myDir.exists()){
+        // Gunakan File dan akses directory file external (DIRECTORY FOLDER) dengan getExternalFilesDir
+        var myDir = File(requireContext().getExternalFilesDir("Folder")?.toURI())
+        if(!myDir.exists()){ // Jika directory belum ada, gunakan mkdir untuk membuat directory Folder
             myDir.mkdir()
         }
+        // dengan menggunakan File(), akses file SavedMeeting.txt pada directory yang telah dibuat
+        // dan apply fungsi "appendText" untuk menambahkan text ke dalam file
         File(myDir, "SavedMeeting.txt").apply {
             appendText("${title} ${paramTitle} ${paramCap} ${paramSH} ${paramEH} ${paramSM} ${paramEM}\n")
         }
         Toast.makeText(context!!, "Meeting Saved", Toast.LENGTH_SHORT).show()
     }
 
+    // Buat fungsi untuk cek space storage
     private fun checkStorage() {
         val NUM_BYTES_NEEDED_FOR_MY_APP = 1024 * 1024 * 10L
         val storageManager = requireContext().applicationContext.getSystemService<StorageManager>()!!
@@ -188,16 +201,23 @@ class BookedRoomFragment : Fragment() {
         }
     }
 
+    // Buat fungsi untuk mendapat permission
     fun isExternalStorageReadable(): Boolean{
+        // gunakan checkSelfPermission untuk mengecek permission apa yang sudah diberikan
         if(ContextCompat.checkSelfPermission(
                         context!!,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED){
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED){ // Cek apakah izin external storage diberikan
+                    // Jika belum, request permission untuk Read dan Write external storage (Write saja)
             requestPermissions(
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    5312)
+                    5312) // Tambahkan request code
         }
+
+        // Setelah permission di dapatkan
+        // lakukan pengecekan state/status apakah external storage telah terpasang atau tidak
         var state = Environment.getExternalStorageState()
+        // jika state == MEDIA_MOUNTED atau MEDIA_MOUNTED_READ_ONLY, maka external storage sudah bisa digunakan
         if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
         {
             return true
@@ -205,13 +225,14 @@ class BookedRoomFragment : Fragment() {
         return false
     }
 
+    // Buat fungsi untuk hasil request permission
     override fun onRequestPermissionsResult(
             requestCode: Int,
             permissions: Array<out String>,
             grantResults: IntArray
     ) {
         when (requestCode) {
-            5312 -> {
+            5312 -> { // Jika request code sesuai dan izin didapatkan, tampilkan toast
                 if ((grantResults.isNotEmpty() &&
                                 grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ) {

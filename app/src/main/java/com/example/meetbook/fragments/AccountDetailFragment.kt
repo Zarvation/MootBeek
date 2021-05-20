@@ -48,6 +48,8 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
     //var Number = ContactsContract.CommonDataKinds.Phone.NUMBER
     //var Image = ContactsContract.CommonDataKinds.Photo.PHOTO
     //var ContactList : MutableList<Contact> = ArrayList()
+
+    // Inisialisasi adapter dan list untuk listView
     lateinit var historyAdapter : ArrayAdapter<String>
     var history  : MutableList<String> = mutableListOf("")
 
@@ -74,6 +76,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         val roomCap = view.findViewById<TextView>(R.id.MeetRoomCap)
         val roomImage = view.findViewById<ImageView>(R.id.MeetRoomImg)
         val bookedRoom = view.findViewById<LinearLayout>(R.id.bookedRoomView)
+        // Inisialisasi komponen dari fragment
         val historylistview = view.findViewById<ListView>(R.id.historyList)
         val historyclear = view.findViewById<Button>(R.id.clearHistory)
         val savedroom = view.findViewById<Button>(R.id.savedRoom)
@@ -126,30 +129,43 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
                 getBegMin.toString().toInt(),getEndMin.toString().toInt())
         }
 
+        // Jika button Clear History diklik
         historyclear.setOnClickListener {
+            // Jalankan fungsi delFile
             delFile()
         }
 
+        // Ketika button save diklik, buka fragment untuk room yang telah disave
         savedroom.setOnClickListener {
             interfaceData.openSavedRoomData()
         }
 
         history.clear()
+        // panggil fungsi untuk membaca file
         readHistoryFile()
+        // Buat Array adapter untuk listView dengan layout yang sudah disediakan android studio
+        // dan menggunakan object list history
         historyAdapter = ArrayAdapter(context!!,android.R.layout.simple_list_item_1,history)
         historylistview.adapter = historyAdapter
 
         return view
     }
 
+    // Fungsi untuk read file history
     private fun readHistoryFile() {
         var dec = DecimalFormat("00")
+        // Gunakan try catch untuk mengantisipasi file tidak ditemukan atau error
         try{
+            // Gunakan openFileInput untuk membaca file History.txt
             var input = requireContext().openFileInput("History.txt").apply {
-                bufferedReader().useLines {
-                    for(text in it.toList()){
+                // baca setiap line dengan menggunakan bufferedReader dan for loop
+                bufferedReader().useLines { // Mengubah menjadi Lines
+                    for(text in it.toList()){ // Jadikan list dan dibaca dengan perulangan for loop
+                        // Pisah baris dengan ' '
                         var item = text.split(' ')
-                        history.add("Room ${item[1]} with duration : ${item[3]} seconds from ${dec.format(item[4].toInt())}:${dec.format(item[6].toInt())} to ${dec.format(item[5].toInt())}:${dec.format(item[7].toInt())}")
+                        // Masukkan informasi setiap baris ke dalam list history yang sudah dibuat
+                        history.add("Room ${item[1]} with duration : ${item[3]} seconds from ${dec.format(item[4].toInt())}:" +
+                                "${dec.format(item[6].toInt())} to ${dec.format(item[5].toInt())}:${dec.format(item[7].toInt())}")
                     }
                 }
             }
@@ -160,12 +176,19 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         }
     }
 
+    // Buat fungsi delFile untuk menghapus file history
     private fun delFile() {
+        // Cek apakah file tersedia
         if(requireContext().fileList().size!=0) {
+            // Gunakan perulangan for untuk setiap file yang ada dan gunakan .deleteFile(file)
+            // untuk menghapus file. *Tambahkan requireContext() untuk penggunaan didalam fragment
             for (i in requireContext().fileList())
                 requireContext().deleteFile(i)
+
+            // Bersihkan list history
             history.clear()
             Toast.makeText(context,"History Cleared", Toast.LENGTH_SHORT).show()
+            // notif bahwa terjadi perubahan pada adapter
             historyAdapter.notifyDataSetChanged()
         }
         else

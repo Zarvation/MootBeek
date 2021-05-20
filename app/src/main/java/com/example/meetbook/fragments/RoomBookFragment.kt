@@ -245,7 +245,7 @@ class RoomBookFragment : Fragment() {
 
             var duration: Long = ((endHour*3600 + endMin*60) - (timeNow[0].toInt()*3600 + timeNow[1].toInt()*60)).toLong()
 
-            // Write History File
+            // Write/Tulis History File
             writeHistoryFile(param1!!,param2.toString(),duration,beginHour,beginMin,endHour,endMin)
 
             var jam = beginHour-timeNow[0].toInt()
@@ -325,9 +325,15 @@ class RoomBookFragment : Fragment() {
         return view
     }
 
+    // Buat Fungsi writeHistoryFile untuk menambah history meeting
+    // Masukkan sejumlah parameter informasi yang akan dimasukkan ke file
     private fun writeHistoryFile(name:String,cap:String,duration:Long,beginHour:Int,beginMin:Int,endHour:Int,endMin:Int) {
+        // Menulis file internal
+        // Gunakan openFileOutput untuk mengakses file History.txt dan menggunakan Context.MODE_APPEND agar file bisa di append
         var output = requireContext().openFileOutput("History.txt",Context.MODE_APPEND).apply{
+            // apply write untuk mulai menulis file, informasi yang akan dimasukkan diubah ke byte array
             write(("${name} ${cap} ${duration} ${beginHour} ${endHour} ${beginMin} ${endMin}\n").toByteArray())
+            // tutup dan simpan file
             close()
         }
     }
