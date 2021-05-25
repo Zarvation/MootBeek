@@ -43,6 +43,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var param3: Int? = null
 
     //var DisplayName = ContactsContract.Contacts.DISPLAY_NAME
     //var Number = ContactsContract.CommonDataKinds.Phone.NUMBER
@@ -57,6 +58,8 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_CLIENT_NAME)
+            param2 = it.getString(ARG_CLIENT_PASSWORD)
+            param3 = it.getInt(ARG_CLIENT_ID)
         }
 
         //LoaderManager.getInstance(this).initLoader(1,null,this)
@@ -83,7 +86,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         //val recyclerviewget = view.findViewById<RecyclerView>(R.id.recyclerViewContactList)
 
         //Menerima isi argument
-        clientName.text = "Login as $param1"
+        clientName.text = "Login as $param1 $param2 $param3"
         //tambahkan interfacedata dengan aktivitas dari interfaceData
         interfaceData = activity as InterfaceData
 
@@ -212,10 +215,12 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String) =
+        fun newInstance(param1: String, param2: String, param3: Int) =
                 AccountDetailFragment().apply {
                     arguments = Bundle().apply {
                         putString(ARG_CLIENT_NAME, param1)
+                        putString(ARG_CLIENT_PASSWORD, param2)
+                        putInt(ARG_CLIENT_ID, param3)
                     }
                 }
     }

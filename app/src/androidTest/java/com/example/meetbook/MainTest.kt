@@ -106,7 +106,7 @@ class MainTest{
         onView(withId(R.id.LUsername)).perform(typeText(""), closeSoftKeyboard())
         onView(withId(R.id.LPassword)).perform(typeText(""), closeSoftKeyboard())
         // Buat Object Client dengan Username dan Password yang kosong
-        var client = Client("","")
+        var client = Client(0,"","")
 
         // Klik Login
         onView(withId(R.id.LoginButton)).perform(click())
@@ -127,7 +127,7 @@ class MainTest{
         onView(withId(R.id.LUsername)).perform(typeText("client"), closeSoftKeyboard())
         onView(withId(R.id.LPassword)).perform(typeText("123"), closeSoftKeyboard())
         // Buat Object Client dengan Username dan Password
-        var client = Client("client","123")
+        var client = Client(1,"client","123")
 
         // Klik Login
         onView(withId(R.id.LoginButton)).perform(click())

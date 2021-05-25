@@ -14,10 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.meetbook.ARG_CLIENT_NAME
-import com.example.meetbook.R
-import com.example.meetbook.RoomListRecyclerViewAdapter
-import com.example.meetbook.Rooms
+import com.example.meetbook.*
 import kotlinx.android.synthetic.main.fragment_room_list.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -37,6 +34,7 @@ class RoomListFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var param3: Int? = null
     private var RoomItems : MutableList<Rooms> = mutableListOf(
 
     )
@@ -46,6 +44,7 @@ class RoomListFragment : Fragment() {
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+            param3 = it.getInt(ARG_CLIENT_ID)
         }
 
         //Decode Gambar menjadi bitmap dan set image pada imageview
@@ -84,7 +83,9 @@ class RoomListFragment : Fragment() {
 
         //Menerima isi argument
         var usernameClient = arguments?.getString(ARG_CLIENT_NAME)
-        clientStatus.text = "Login as $usernameClient"
+        var passwordClient = arguments?.getString(ARG_CLIENT_PASSWORD)
+        var idClient = arguments?.getInt(ARG_CLIENT_ID)
+        clientStatus.text = "Login as $usernameClient $passwordClient $idClient"
 
         //tambahkan interfacedata dengan aktivitas dari interfaceData
         interfaceData = activity as InterfaceData
@@ -127,11 +128,12 @@ class RoomListFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String) =
+        fun newInstance(param1: String, param2: String, param3: Int) =
                 RoomListFragment().apply {
                     arguments = Bundle().apply {
                         putString(ARG_CLIENT_NAME, param1) //mengirim bundle yang berisi param1 ke argument
-                        //putString(ARG_PARAM2, param2)
+                        putString(ARG_CLIENT_PASSWORD, param2)
+                        putInt(ARG_CLIENT_ID, param3)
                     }
                 }
     }

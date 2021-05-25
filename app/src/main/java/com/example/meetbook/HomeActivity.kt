@@ -14,11 +14,11 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when(item.itemId){
             R.id.room_list -> {
-                replaceFragment(RoomListFragment.newInstance(client?.Username.toString()))
+                replaceFragment(RoomListFragment.newInstance(client?.Username.toString(),client?.Password.toString(),client?.Id!!.toInt()))
                 return@OnNavigationItemSelectedListener true
             }
             R.id.account -> {
-                replaceFragment(AccountDetailFragment.newInstance(client?.Username.toString()))
+                replaceFragment(AccountDetailFragment.newInstance(client?.Username.toString(),client?.Password.toString(),client?.Id!!.toInt()))
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -33,7 +33,7 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         client = intent.getParcelableExtra<Client>(EXTRA_CLIENT_DATA)
 
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        replaceFragment(RoomListFragment.newInstance(client?.Username.toString()))
+        replaceFragment(RoomListFragment.newInstance(client?.Username.toString(),client?.Password.toString(),client?.Id!!.toInt()))
 
         //Mengirim client ke Fragment RoomList lewat newInstance
         //val roomlistfragment = RoomListFragment.newInstance(client?.Username.toString())
