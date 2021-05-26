@@ -23,44 +23,68 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.005" />
 
-    <TextView
-        android:id="@+id/CurrentRoomLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginTop="12dp"
-        android:text="0 Room Currently Booked"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/bookedRoomView"
-        app:layout_constraintTop_toBottomOf="@+id/ClientName"
-        app:layout_constraintVertical_bias="0.6"
-        tools:layout_editor_absoluteX="10dp" />
+    <!--    // Buat View untuk data yang tersimpan di sharedpreferences-->
 
-<!--    // Buat View untuk data yang tersimpan di sharedpreferences-->
+    <!--<ScrollView
+        android:id="@+id/historyListScroll"
+        android:layout_width="412dp"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
+        app:layout_constraintVertical_bias="0.422">-->
+
+    <!-- Buat Listview untuk menampilkan history meeting -->
+
+    <Button
+        android:id="@+id/editAccBtn"
+        android:layout_width="98dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="12dp"
+        android:text="Edit Account"
+        android:textSize="10dp"
+        android:background="@drawable/greenbutton"
+        app:layout_constraintBottom_toTopOf="@+id/CurrentRoomLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.031"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ClientName"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ListView
+        android:id="@+id/historyList"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="0.148"
+        tools:layout_editor_absoluteX="-9dp" />
+
     <LinearLayout
         android:id="@+id/bookedRoomView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginVertical="10dp"
         android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="10dp"
         android:background="@drawable/room_list_item_layout"
-        android:elevation="10dp"
         android:clickable="true"
+        android:elevation="10dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.052"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ClientName"
-        app:layout_constraintVertical_bias="0.122">
+        app:layout_constraintVertical_bias="0.183">
 
         <ImageView
             android:id="@+id/MeetRoomImg"
             android:layout_width="600dp"
             android:layout_height="248dp"
             android:layout_gravity="center"
-            android:clickable="true"
-            />
+            android:clickable="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -107,17 +131,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!--<ScrollView
-        android:id="@+id/historyListScroll"
-        android:layout_width="412dp"
-        android:layout_height="200dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
-        app:layout_constraintVertical_bias="0.422">-->
-
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
@@ -125,20 +138,20 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bookedRoomView"
-        app:layout_constraintVertical_bias="0.089">
+        app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
             android:layout_weight="1"
             android:text="History"
             android:textColor="@color/black"
             android:textSize="16dp"
-            android:layout_marginHorizontal="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.044"
@@ -151,26 +164,30 @@
             android:id="@+id/clearHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clear History"
-            android:layout_marginHorizontal="10dp"/>
+            android:layout_marginHorizontal="10dp"
+            android:text="Clear History" />
         <!-- Buat button untuk melihat daftar room yang di simpan/save -->
         <Button
             android:id="@+id/savedRoom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Saved Room"
-            android:layout_marginHorizontal="10dp"/>
+            android:layout_marginHorizontal="10dp"
+            android:text="Saved Room" />
     </LinearLayout>
 
-    <!-- Buat Listview untuk menampilkan history meeting -->
-    <ListView
-        android:id="@+id/historyList"
+    <TextView
+        android:id="@+id/CurrentRoomLabel"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.213"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="12dp"
+        android:text="0 Room Currently Booked"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/bookedRoomView"
+        app:layout_constraintTop_toBottomOf="@+id/ClientName"
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="10dp" />
+
     <!--</ScrollView>-->
 
     <!--<TextView

@@ -14,7 +14,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.example.meetbook.*
+import com.example.meetbook.HomeActivity.Companion.current_password
+import com.example.meetbook.HomeActivity.Companion.current_username
 import kotlinx.android.synthetic.main.fragment_room_list.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -45,6 +48,19 @@ class RoomListFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
             param3 = it.getInt(ARG_CLIENT_ID)
+        }
+
+        var db= Room.databaseBuilder(
+                context!!,
+                RoomUserDBHelper::class.java,
+                "meetbookDb.db"
+        ).build()
+
+        doAsync {
+            for (allData in db.userDao().getUser(param3!!)){
+                param1 = allData.username
+                param2 = allData.password
+            }
         }
 
         //Decode Gambar menjadi bitmap dan set image pada imageview
@@ -82,10 +98,11 @@ class RoomListFragment : Fragment() {
         val recyclerviewget = view.findViewById<RecyclerView>(R.id.recyclerViewRoomList)
 
         //Menerima isi argument
-        var usernameClient = arguments?.getString(ARG_CLIENT_NAME)
-        var passwordClient = arguments?.getString(ARG_CLIENT_PASSWORD)
-        var idClient = arguments?.getInt(ARG_CLIENT_ID)
-        clientStatus.text = "Login as $usernameClient $passwordClient $idClient"
+        /*var usernameClient = ""
+        var passwordClient = ""
+        var idClient = arguments?.getInt(ARG_CLIENT_ID)*/
+
+        clientStatus.text = "Login as $current_username"
 
         //tambahkan interfacedata dengan aktivitas dari interfaceData
         interfaceData = activity as InterfaceData

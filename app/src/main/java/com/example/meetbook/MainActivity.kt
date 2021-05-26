@@ -1,5 +1,6 @@
 package com.example.meetbook
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
@@ -9,8 +10,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.room.Room
+import com.example.meetbook.HomeActivity.Companion.current_password
+import com.example.meetbook.HomeActivity.Companion.current_username
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_register.*
 import org.jetbrains.anko.doAsync
@@ -21,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        checkBoxRemember.isChecked = false
 
         var db= Room.databaseBuilder(
             this,
@@ -53,6 +60,8 @@ class MainActivity : AppCompatActivity() {
                                     EXTRA_CLIENT_DATA,
                                     client
                                 ) // Mengirim Extra dengan key yang tersimpan di Keys.kt
+                                current_username = datuser
+                                current_password = datpass
                                 startActivity(IntentToHome)
                                 state = true
                                 break
@@ -60,8 +69,10 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     uiThread {
-                        if (state)
-                            Toast.makeText(this@MainActivity,"Login Sukses",Toast.LENGTH_SHORT).show()
+                        if (state) {
+                            Toast.makeText(this@MainActivity, "Login Sukses", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                         else
                             Toast.makeText(this@MainActivity,"Username dan Password Salah",Toast.LENGTH_SHORT).show()
                     }
@@ -72,6 +83,32 @@ class MainActivity : AppCompatActivity() {
             var IntentToRegis = Intent(this,RegisterActivity::class.java)
             startActivity(IntentToRegis)
         }
+
+        removeBtn.setOnClickListener {
+            var BuilderDialog = AlertDialog.Builder(this)
+            // Gunakan layout untuk dialog
+            var inflaterDialog = layoutInflater.inflate(R.layout.dialog_remove_user, null)
+            BuilderDialog.setView(inflaterDialog)
+            // Jika button Remove diklik
+            BuilderDialog.setPositiveButton("Remove"){ dialogInterface: DialogInterface, i: Int ->
+                var getUsername = inflaterDialog.findViewById<EditText>(R.id.usernameToRemove)
+                var getPassword = inflaterDialog.findViewById<EditText>(R.id.passwordToRemove)
+
+                var targetuser = getUsername.text.toString()
+                var targetpass = getPassword.text.toString()
+
+                doAsync {
+                    if (targetpass == db.userDao().getPassByName(targetuser)){
+                        db.userDao().deleteUser(targetuser)
+                    }
+                    uiThread {
+                        Toast.makeText(this@MainActivity,"User Deleted",Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            BuilderDialog.create().show()
+        }
+
         var receiver= AirplaneModeReceiver()
         IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also{
             registerReceiver(receiver,it)

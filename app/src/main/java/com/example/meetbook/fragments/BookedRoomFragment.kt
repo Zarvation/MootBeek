@@ -8,9 +8,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
+import android.os.StatFs
 import android.os.storage.StorageManager
 import android.util.Base64
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,14 +18,14 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
+import androidx.fragment.app.Fragment
 import com.example.meetbook.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
 import java.text.DecimalFormat
 import java.util.*
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -71,7 +71,7 @@ class BookedRoomFragment : Fragment() {
         // Mulai dan create media player
         if (mediaPlayerIntentService == null){
             // Buat intent untuk service media player
-            mediaPlayerIntentService = Intent(activity,MeetingSongService::class.java)
+            mediaPlayerIntentService = Intent(activity, MeetingSongService::class.java)
             // Kirimkan aksi untuk membuat media player dan jalankan service
             mediaPlayerIntentService?.setAction(ACTION_CREATE)
             getActivity()?.startService(mediaPlayerIntentService)
@@ -113,7 +113,7 @@ class BookedRoomFragment : Fragment() {
         buttonSave.setOnClickListener {
             var BuilderDialog = AlertDialog.Builder(context!!)
             // Gunakan layout save_meeting.xml untuk dialog
-            var inflaterDialog = layoutInflater.inflate(R.layout.save_meeting,null)
+            var inflaterDialog = layoutInflater.inflate(R.layout.save_meeting, null)
             BuilderDialog.setView(inflaterDialog)
             // Jika button Save diklik
             BuilderDialog.setPositiveButton("Save"){ dialogInterface: DialogInterface, i: Int ->
@@ -125,7 +125,7 @@ class BookedRoomFragment : Fragment() {
                     saveFileExternal(getTitle.text.toString())
                 }
             }
-            BuilderDialog.setNeutralButton("Check Storage"){dialogInterface: DialogInterface, i: Int ->
+            BuilderDialog.setNeutralButton("Check Storage"){ dialogInterface: DialogInterface, i: Int ->
                 if(isExternalStorageReadable()){
                     checkStorage()
                 }
@@ -173,7 +173,7 @@ class BookedRoomFragment : Fragment() {
     }
 
     // Buat fungsi untuk menyimpan file external
-    private fun saveFileExternal(title:String) {
+    private fun saveFileExternal(title: String) {
         // Gunakan File dan akses directory file external (DIRECTORY FOLDER) dengan getExternalFilesDir
         var myDir = File(requireContext().getExternalFilesDir("Folder")?.toURI())
         if(!myDir.exists()){ // Jika directory belum ada, gunakan mkdir untuk membuat directory Folder
@@ -187,8 +187,24 @@ class BookedRoomFragment : Fragment() {
         Toast.makeText(context!!, "Meeting Saved", Toast.LENGTH_SHORT).show()
     }
 
+    private fun externalMemoryAvailable() : Boolean {
+        return android.os.Environment.getExternalStorageState().equals(
+            android.os.Environment.MEDIA_MOUNTED)
+    }
+
     // Buat fungsi untuk cek space storage
     private fun checkStorage() {
+        /*if (externalMemoryAvailable()) {
+            val path = Environment.getExternalStorageState()
+            val stat = StatFs(path)
+            val blockSize = stat.blockSizeLong
+            val availableBlocks = stat.availableBlocksLong
+            Toast.makeText(
+                context!!,
+                "External Storage's Space available : ${availableBlocks / 1048576} MB",
+                Toast.LENGTH_SHORT
+            ).show()
+        }*/
         val NUM_BYTES_NEEDED_FOR_MY_APP = 1024 * 1024 * 10L
         val storageManager = requireContext().applicationContext.getSystemService<StorageManager>()!!
         val appSpecificInternalDirUuid: UUID = storageManager.getUuidForPath(requireContext().filesDir)
@@ -197,7 +213,11 @@ class BookedRoomFragment : Fragment() {
         if (availableBytes < NUM_BYTES_NEEDED_FOR_MY_APP) {
             Toast.makeText(context!!, "External Storage's Space < 10MB", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context!!, "External Storage's Space available : ${availableBytes/1048576} MB", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context!!,
+                "External Storage's Space available : ${availableBytes / 1048576} MB",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -205,20 +225,26 @@ class BookedRoomFragment : Fragment() {
     fun isExternalStorageReadable(): Boolean{
         // gunakan checkSelfPermission untuk mengecek permission apa yang sudah diberikan
         if(ContextCompat.checkSelfPermission(
-                        context!!,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED){ // Cek apakah izin external storage diberikan
+                context!!,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED){ // Cek apakah izin external storage diberikan
                     // Jika belum, request permission untuk Read dan Write external storage (Write saja)
             requestPermissions(
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    5312) // Tambahkan request code
+                arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                5312
+            ) // Tambahkan request code
         }
 
         // Setelah permission di dapatkan
         // lakukan pengecekan state/status apakah external storage telah terpasang atau tidak
         var state = Environment.getExternalStorageState()
         // jika state == MEDIA_MOUNTED atau MEDIA_MOUNTED_READ_ONLY, maka external storage sudah bisa digunakan
-        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state))
+        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(
+                state
+            ))
         {
             return true
         }
@@ -227,14 +253,14 @@ class BookedRoomFragment : Fragment() {
 
     // Buat fungsi untuk hasil request permission
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
     ) {
         when (requestCode) {
             5312 -> { // Jika request code sesuai dan izin didapatkan, tampilkan toast
                 if ((grantResults.isNotEmpty() &&
-                                grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ) {
                     Toast.makeText(context!!, "Access Given", Toast.LENGTH_SHORT).show()
                 }
@@ -242,7 +268,7 @@ class BookedRoomFragment : Fragment() {
         }
     }
 
-    fun decodeStrImg (param3:String?): Bitmap? {
+    fun decodeStrImg(param3: String?): Bitmap? {
         val imageBytes = Base64.decode(param3, Base64.DEFAULT)
         val decodeImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         return decodeImage
@@ -264,7 +290,15 @@ class BookedRoomFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: Int, param3: String, param4: Int, param5: Int, param6: Int, param7: Int) =
+        fun newInstance(
+            param1: String,
+            param2: Int,
+            param3: String,
+            param4: Int,
+            param5: Int,
+            param6: Int,
+            param7: Int
+        ) =
             BookedRoomFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_TITLE, param1) //mengirim bundle yang berisi data room yang telah di book ke argument

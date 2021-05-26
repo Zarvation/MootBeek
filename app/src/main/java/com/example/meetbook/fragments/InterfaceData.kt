@@ -7,4 +7,5 @@ interface InterfaceData {
     // Membuat fungsi untuk mengirim data room yang telah di book
     fun sendBookedRoomData(title: String, capacity: Int, image: String, beginHour: Int, endHour: Int, beginMin: Int, endMin: Int)
     fun openSavedRoomData()
+    fun openEditUser(id: Int, username: String, password: String)
 }

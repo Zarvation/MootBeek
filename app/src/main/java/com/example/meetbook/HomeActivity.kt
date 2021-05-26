@@ -83,4 +83,17 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         transaksi3.addToBackStack(null)
         transaksi3.commit()
     }
+
+    override fun openEditUser(id: Int, username: String, password: String) {
+        val fragmentEditUser = EditUserFragment.newInstance(id, username, password)
+        val transaksi4 = this.supportFragmentManager.beginTransaction()
+        transaksi4.replace(R.id.fragmentContainer, fragmentEditUser)
+        transaksi4.addToBackStack(null)
+        transaksi4.commit()
+    }
+
+    companion object{
+        var current_username = ""
+        var current_password = ""
+    }
 }

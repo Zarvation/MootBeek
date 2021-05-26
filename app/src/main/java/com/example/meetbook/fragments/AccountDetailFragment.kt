@@ -18,6 +18,7 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.example.meetbook.*
 import kotlinx.android.synthetic.main.fragment_account_detail.*
 import org.jetbrains.anko.doAsync
@@ -57,9 +58,22 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_CLIENT_NAME)
-            param2 = it.getString(ARG_CLIENT_PASSWORD)
+            param1 = it.getString(ARG_PARAM1)
+            param2 = it.getString(ARG_PARAM2)
             param3 = it.getInt(ARG_CLIENT_ID)
+        }
+
+        var db= Room.databaseBuilder(
+                context!!,
+                RoomUserDBHelper::class.java,
+                "meetbookDb.db"
+        ).build()
+
+        doAsync {
+            for (allData in db.userDao().getUser(param3!!)){
+                param1 = allData.username
+                param2 = allData.password
+            }
         }
 
         //LoaderManager.getInstance(this).initLoader(1,null,this)
@@ -84,9 +98,10 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         val historyclear = view.findViewById<Button>(R.id.clearHistory)
         val savedroom = view.findViewById<Button>(R.id.savedRoom)
         //val recyclerviewget = view.findViewById<RecyclerView>(R.id.recyclerViewContactList)
+        val edituser = view.findViewById<Button>(R.id.editAccBtn)
 
         //Menerima isi argument
-        clientName.text = "Login as $param1 $param2 $param3"
+        clientName.text = "Login as ${HomeActivity.current_username}"
         //tambahkan interfacedata dengan aktivitas dari interfaceData
         interfaceData = activity as InterfaceData
 
@@ -141,6 +156,10 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         // Ketika button save diklik, buka fragment untuk room yang telah disave
         savedroom.setOnClickListener {
             interfaceData.openSavedRoomData()
+        }
+
+        edituser.setOnClickListener {
+            interfaceData.openEditUser(param3!!,param1!!,param2!!)
         }
 
         history.clear()
