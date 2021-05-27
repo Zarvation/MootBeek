@@ -15,36 +15,44 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        // Buat dan panggil database dengan databaseBuilder
         var db= Room.databaseBuilder(
-            this,
-            RoomUserDBHelper::class.java,
-            "meetbookDb.db"
+            this, // Darimana di build
+            RoomUserDBHelper::class.java, // Database yang akan dibangun
+            "meetbookDb.db" // nama database
         ).build()
 
+        // Ketika button registrasi diklik
         RegisButton.setOnClickListener {
+            // Jika username dan password terisi
             if (RUsername.text.toString().length>0 && RPassword.text.toString().length>0){
-                var state = true
+                var state = true // Deklarasi status apakah username pernah diisi
+                // Ambil username dan password yang diisi
                 var datuser = RUsername.text.toString()
                 var datpass = RPassword.text.toString()
-                var hasil = ""
+
                 doAsync {
+                    // Ambil data dari User dengan memanggil fungsi getAllData() dari db.userDao()
                     var userList = db.userDao().getAllData()
+                    // Lakukan pengecekan apakah username telah terdaftar
                     for(allData in userList){
                         if (datuser == allData.username){
-                            hasil += "${allData._id} ${allData.username} ${allData.password}\n"
-                            state = false
-                            break
+                            state = false // Jika ada, maka status dijadikan false kemudian
+                            break // hentikan pengecekan
                         }
                     }
+
+                    // Jika status true (username valid)
                     if (state) {
+                        // Insert/Masukkan data user (Username dan Password) ke dalam database dengan
+                        // menggunakan insertAll()
                         db.userDao().insertAll(
                             User(
                                 userList.size+1,datuser,datpass
-                            )
+                            ) // Masukkan User yang berisi id, username, dan password
                         )
                     }
                     uiThread {
-                        Log.w("Hasil",hasil)
                         if (state) {
                             RegisStatus.text="User ${RUsername.text} has been created"
                         }

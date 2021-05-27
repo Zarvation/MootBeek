@@ -92,6 +92,7 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         transaksi4.commit()
     }
 
+    // Buat Companion object yang berisi username dan password agar dapat diakses ketika user melakukan login
     companion object{
         var current_username = ""
         var current_password = ""

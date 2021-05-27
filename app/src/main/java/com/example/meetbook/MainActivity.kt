@@ -29,10 +29,11 @@ class MainActivity : AppCompatActivity() {
 
         checkBoxRemember.isChecked = false
 
+        // Buat dan panggil database dengan databaseBuilder
         var db= Room.databaseBuilder(
-            this,
-            RoomUserDBHelper::class.java,
-            "meetbookDb.db"
+            this, // Darimana di build
+            RoomUserDBHelper::class.java, // Database yang akan dibangun
+            "meetbookDb.db" // nama database
         ).build()
 
         LoginButton.setOnClickListener { // Ketika Login diklik, terjadi pemindahan screen dari MainActivity ke HomeActivity dengan membawa data object Client yang berisi username dan password terisi
@@ -47,24 +48,33 @@ class MainActivity : AppCompatActivity() {
                 var roomSharedPrefHelper = SharedPrefHelper(this, PrefFileName)
                 roomSharedPrefHelper.clearValues()
 
-                var state = false
+                // Ketika login diklik,
+                var state = false // Deklarasi status apakah user terdapat di database
+                // Deklarasi user dan pass yang dimasukkan
                 var datuser = LUsername.text.toString()
                 var datpass = LPassword.text.toString()
+
                 doAsync {
+                    // Ambil data dari User dengan memanggil fungsi getAllData() dari db.userDao()
                     var userList = db.userDao().getAllData()
+                    // Lakukan pengecekan apakah username dan password yang diinput sesuai/terdaftar
                     for(allData in userList){
                         if (datuser == allData.username){
                             if (datpass == allData.password){
+                                // Jika terdaftar, kirimkan ID ke HomeActivity
                                 var client = Client(allData._id, LUsername.text.toString(), LPassword.text.toString())
                                 IntentToHome.putExtra(
                                     EXTRA_CLIENT_DATA,
                                     client
                                 ) // Mengirim Extra dengan key yang tersimpan di Keys.kt
+
+                                // Kirimkan username dan password ke dalam companion object milik HomeActivity
                                 current_username = datuser
                                 current_password = datpass
+                                // Mulai activity
                                 startActivity(IntentToHome)
                                 state = true
-                                break
+                                break // Hentikan pengecekan
                             }
                         }
                     }
@@ -84,13 +94,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(IntentToRegis)
         }
 
+        // Ketika button remove diklik, munculkan dialog
         removeBtn.setOnClickListener {
             var BuilderDialog = AlertDialog.Builder(this)
-            // Gunakan layout untuk dialog
+            // Gunakan layout dialog_remove_user.xml untuk dialog
             var inflaterDialog = layoutInflater.inflate(R.layout.dialog_remove_user, null)
             BuilderDialog.setView(inflaterDialog)
             // Jika button Remove diklik
             BuilderDialog.setPositiveButton("Remove"){ dialogInterface: DialogInterface, i: Int ->
+                // Ambil username dan password yang dimasukkan ke dalam layout
                 var getUsername = inflaterDialog.findViewById<EditText>(R.id.usernameToRemove)
                 var getPassword = inflaterDialog.findViewById<EditText>(R.id.passwordToRemove)
 
@@ -98,7 +110,10 @@ class MainActivity : AppCompatActivity() {
                 var targetpass = getPassword.text.toString()
 
                 doAsync {
+                    // gunakan getPassByName() untuk mengambil password dari username yang dimasukkan
+                    // dan cocokkan dengan password yang di isi
                     if (targetpass == db.userDao().getPassByName(targetuser)){
+                        // Jika sesuai, hapus user dengan deleteUser() sesuai dengan username yang dimasukkan
                         db.userDao().deleteUser(targetuser)
                     }
                     uiThread {

@@ -61,25 +61,32 @@ class EditUserFragment : Fragment() {
         val passwordText = view.findViewById<EditText>(R.id.editTextPassword)
         val savebtn = view.findViewById<Button>(R.id.SaveBtn)
 
+        // Buat dan panggil database dengan databaseBuilder
         var db= Room.databaseBuilder(
-            context!!,
-            RoomUserDBHelper::class.java,
-            "meetbookDb.db"
+            context!!, // Darimana di build
+            RoomUserDBHelper::class.java, // Database yang akan dibangun
+            "meetbookDb.db" // nama database
         ).build()
 
+        // Ketika button save di klik
         savebtn.setOnClickListener {
+            // Ambil username dan password yang dimasukkan
             var newUsername = usernameText.text.toString()
             var newPassword = passwordText.text.toString()
+            // Lakukan pengecekan apakah username dan password kosong
             if (usernameText.text.toString().isEmpty()){
                 Toast.makeText(context,"Username Belum Diisi", Toast.LENGTH_SHORT).show()
             }
             else if (passwordText.text.toString().isEmpty()){
                 Toast.makeText(context,"Password Belum Diisi", Toast.LENGTH_SHORT).show()
             }
+            // Jika tidak
             else {
                 doAsync {
+                    // Update data user dengan updateDB() dengan memasukkan id dari extra, username dan password
                     db.userDao().updateDB(paramID!!, newUsername, newPassword)
                     uiThread {
+                        // Update isi companion object dengan username dan password yang baru
                         current_username = newUsername
                         current_password = newPassword
                         Toast.makeText(context,"User Updated", Toast.LENGTH_SHORT).show()
