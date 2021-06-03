@@ -102,6 +102,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
 
         //Menerima isi argument
         clientName.text = "Login as ${HomeActivity.current_username}"
+
         //tambahkan interfacedata dengan aktivitas dari interfaceData
         interfaceData = activity as InterfaceData
 
@@ -109,6 +110,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         var roomSharedPrefHelper = SharedPrefHelper(context!!, PrefFileName)
 
         // Get / Ambil data dari file SharedPreferences
+        var getId = roomSharedPrefHelper.Id
         // Mengambil nama room
         var getTitle = roomSharedPrefHelper.name
         // Mengambil kapasitas room
@@ -142,7 +144,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
 
         // Ketika View di klik, data akan dikirimkan ke fungsi interfaceData untuk ditampilkan semua
         bookedRoom.setOnClickListener {
-            interfaceData.sendBookedRoomData(getTitle.toString(),getCap.toString().toInt(),
+            interfaceData.sendBookedRoomData(getId.toString().toInt(),getTitle.toString(),getCap.toString().toInt(),
                 getImg.toString(),getBegHour.toString().toInt(),getEndHour.toString().toInt(),
                 getBegMin.toString().toInt(),getEndMin.toString().toInt())
         }

@@ -59,7 +59,7 @@ class RoomListRecyclerViewAdapter (data : MutableList<Rooms>, interfaceData: Int
         //Cara kedua, diperlukan interfaceData = activity as InterfaceData (dari RoomListFragment.kt)
         holder.itemView.setOnClickListener {
             val model = RoomData.get(position)
-            interfaceData.sendRoomData(model.title,model.capacity,model.image)
+            interfaceData.sendRoomData(model.id,model.title,model.capacity,model.image)
         }
     }
 

@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 // Buat Shared Preferences Helper untuk Room yang telah di book
 class SharedPrefHelper (context: Context, filename: String) {
     // Buat Key untuk informasi yang akan dimasukkan
+    val ROOM_ID = "ROOMID"
     val ROOM_NAME = "ROOMNAME"
     val ROOM_CAP = "ROOMCAPACITY"
     val ROOM_IMG = "ROOMIMAGE"
@@ -21,6 +22,14 @@ class SharedPrefHelper (context: Context, filename: String) {
     }
 
     // Buat fungsi get() dan set() untuk setiap infomasi yang akan dimasukkan
+    var Id : Int
+        // mengambil data string name dengan key ROOM_NAME dan default value kosong
+        get() = roomPreferences.getInt(ROOM_ID,0)
+        // Set data string name dengan value yang dimasukkan
+        set(value){
+            // edit() untuk memanipulasi data string name dengan key ROOM_NAME dan .apply() untuk menyimpan data
+            roomPreferences.edit().putInt(ROOM_ID,value).apply()
+        }
     var name : String?
         // mengambil data string name dengan key ROOM_NAME dan default value kosong
         get() = roomPreferences.getString(ROOM_NAME,"")

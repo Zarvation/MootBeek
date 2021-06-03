@@ -74,8 +74,13 @@ class RoomListFragment : Fragment() {
         val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
         // --> End
 
-        RoomItems.add(Rooms("Room 1A", 8, imageString))
-        RoomItems.add(Rooms("Room 2A", 10, imageString))
+        //RoomItems.add(Rooms(1, "Room 1A", 8, imageString))
+        //RoomItems.add(Rooms(2, "Room 2A", 10, imageString))
+
+        // Inisialisasi roomTransaction
+        val tmp = roomTransaction(context!!)
+        // Jalankan fungsi untuk membaca data Room dan masukkan ke List untuk ditampilkan pada recyclerView
+        RoomItems = tmp.viewAllRoom()
     }
 
     //Tambah interfaceData

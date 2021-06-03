@@ -47,8 +47,8 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
     }
 
     //Meng-override fungsi sendRoomData untuk memulai fragment RoomBook dengan mengirim data Room tersebut
-    override fun sendRoomData(title: String, capacity: Int, image: String) {
-        val fragmentBook = RoomBookFragment.newInstance(title,capacity,image)
+    override fun sendRoomData(id: Int, title: String, capacity: Int, image: String) {
+        val fragmentBook = RoomBookFragment.newInstance(id,title,capacity,image)
 
         val transaksi = this.supportFragmentManager.beginTransaction()
         transaksi.replace(R.id.fragmentContainer, fragmentBook)
@@ -57,7 +57,7 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
     }
 
     // Mengoverride fungsi sendBookedRoomData
-    override fun sendBookedRoomData(
+    override fun sendBookedRoomData(id: Int,
         title: String,
         capacity: Int,
         image: String,
@@ -67,7 +67,7 @@ class HomeActivity : AppCompatActivity(), InterfaceData {
         endMin: Int
     ) {
         // Kirim data booked room ke fragment BookedRoom lewat newInstance
-        val fragmentBooked = BookedRoomFragment.newInstance(title,capacity,image,beginHour,endHour,beginMin,endMin)
+        val fragmentBooked = BookedRoomFragment.newInstance(id,title,capacity,image,beginHour,endHour,beginMin,endMin)
 
         // Mulai fragment BookedRoom
         val transaksi2 = this.supportFragmentManager.beginTransaction()

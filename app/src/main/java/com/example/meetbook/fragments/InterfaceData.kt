@@ -3,9 +3,9 @@ package com.example.meetbook.fragments
 import androidx.fragment.app.Fragment
 
 interface InterfaceData {
-    fun sendRoomData(title: String, capacity: Int, image: String)
+    fun sendRoomData(id: Int, title: String, capacity: Int, image: String)
     // Membuat fungsi untuk mengirim data room yang telah di book
-    fun sendBookedRoomData(title: String, capacity: Int, image: String, beginHour: Int, endHour: Int, beginMin: Int, endMin: Int)
+    fun sendBookedRoomData(id: Int, title: String, capacity: Int, image: String, beginHour: Int, endHour: Int, beginMin: Int, endMin: Int)
     fun openSavedRoomData()
     fun openEditUser(id: Int, username: String, password: String)
 }

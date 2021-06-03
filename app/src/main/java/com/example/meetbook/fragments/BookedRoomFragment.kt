@@ -29,6 +29,7 @@ import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ARG_ID = "param0"
 private const val ARG_TITLE = "param1"
 private const val ARG_CAP = "param2"
 private const val ARG_IMAGE = "param3"
@@ -44,6 +45,7 @@ private const val ARG_EM = "param7"
  */
 class BookedRoomFragment : Fragment() {
     // Inisialisasi dan sediakan variable untuk menampung data room
+    private var paramId: Int? = null
     private var paramTitle: String? = null
     private var paramCap: Int? = null
     private var paramImage: String? = null
@@ -59,6 +61,7 @@ class BookedRoomFragment : Fragment() {
         super.onCreate(savedInstanceState)
         // Simpan data ke variable yang telah di sediakan
         arguments?.let {
+            paramId = it.getInt(ARG_ID)
             paramTitle = it.getString(ARG_TITLE)
             paramCap = it.getInt(ARG_CAP)
             paramImage = it.getString(ARG_IMAGE)
@@ -291,6 +294,7 @@ class BookedRoomFragment : Fragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(
+            param0: Int,
             param1: String,
             param2: Int,
             param3: String,
@@ -301,7 +305,8 @@ class BookedRoomFragment : Fragment() {
         ) =
             BookedRoomFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_TITLE, param1) //mengirim bundle yang berisi data room yang telah di book ke argument
+                    putInt(ARG_ID, param0) //mengirim bundle yang berisi data room yang telah di book ke argument
+                    putString(ARG_TITLE, param1)
                     putInt(ARG_CAP, param2)
                     putString(ARG_IMAGE, param3)
                     putInt(ARG_SH, param4)

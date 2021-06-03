@@ -47,6 +47,7 @@ class RoomBookFragment : Fragment() {
     // Inisialisasi Filename untuk SharedPreferences
     private val PrefFileName = "ROOMFILE001"
     // TODO: Rename and change types of parameters
+    private var paramId: Int? = null
     private var param1: String? = null
     private var param2: Int? = null
     private var param3: String? = null
@@ -137,6 +138,7 @@ class RoomBookFragment : Fragment() {
         super.onCreate(savedInstanceState)
         //Menerima argument
         arguments?.let {
+            paramId = it.getInt(ARG_GET_ROOM_ID)
             param1 = it.getString(ARG_GET_ROOM_TITLE)
             param2 = it.getInt(ARG_GET_ROOM_CAP)
             param3 = it.getString(ARG_GET_ROOM_IMAGE)
@@ -219,6 +221,7 @@ class RoomBookFragment : Fragment() {
             // Inisialisasi SharedPreferences yang telah dibuat
             var roomSharedPrefHelper = SharedPrefHelper(context!!, PrefFileName)
             // Ubah informasi file sharedpreferences menjadi informasi yang akan dikirimkan
+            roomSharedPrefHelper.Id = paramId.toString().toInt()
             // set name dengan param1 (nama room)
             roomSharedPrefHelper.name = param1
             // set cap dengan param2 (kapasitas room)
@@ -415,9 +418,10 @@ class RoomBookFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: Int, param3: String) =
+        fun newInstance(paramId: Int, param1: String, param2: Int, param3: String) =
                 RoomBookFragment().apply {
                     arguments = Bundle().apply {
+                        putInt(ARG_GET_ROOM_ID, paramId)
                         putString(ARG_GET_ROOM_TITLE, param1) //mengirim bundle yang berisi param1, param2, param3 ke argument
                         putInt(ARG_GET_ROOM_CAP, param2)
                         putString(ARG_GET_ROOM_IMAGE, param3)

@@ -1,4 +1,8 @@
 package com.example.meetbook
 
-data class Rooms (var title: String, var capacity: Int, var image: String) {
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class Rooms (var id: Int = 0, var title: String = "", var capacity: Int = 0, var image: String = "") : Parcelable {
 }
