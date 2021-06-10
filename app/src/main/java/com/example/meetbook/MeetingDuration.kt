@@ -33,10 +33,15 @@ class MeetingDuration : JobService() {
             var roomSharedPrefHelper = SharedPrefHelper(this, PrefFileName)
             roomSharedPrefHelper.clearValues()
 
+            // Panggil widgetmanager
             var appWidgetManager = AppWidgetManager.getInstance(this)
+            // Ambil ID dari class widget BookedRoomWidget
             var ids = appWidgetManager.getAppWidgetIds(ComponentName(this,BookedRoomWidget::class.java))
+            // Bentuk Intent dengan mengirimkan action UPDATE untuk menjalankan OnUpdate pada class widget
             var roomBookedIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            // Masukkan kedalam extra untuk menentukan apa yang akan diupdate dengan mengirimkan id
             roomBookedIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids)
+            // send broadcast
             sendBroadcast(roomBookedIntent)
 
             val NotifyID = EXTRA_NOTIFICATION_MEETING

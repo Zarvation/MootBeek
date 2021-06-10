@@ -408,12 +408,18 @@ class RoomBookFragment : Fragment() {
         }
     }
 
+    // Ketika Room selesai dibook atau tidak jadi dibook, update widget dengan menggunakan broadcast
     override fun onStop() {
         super.onStop()
+        // Panggil widgetmanager
         var appWidgetManager = AppWidgetManager.getInstance(context)
+        // Ambil ID dari class widget BookedRoomWidget
         var ids = appWidgetManager.getAppWidgetIds(ComponentName(context!!,BookedRoomWidget::class.java))
+        // Bentuk Intent dengan mengirimkan action UPDATE untuk menjalankan OnUpdate pada class widget
         var roomBookedIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+        // Masukkan kedalam extra untuk menentukan apa yang akan diupdate dengan mengirimkan id
         roomBookedIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids)
+        // send broadcast
         requireContext().sendBroadcast(roomBookedIntent)
     }
 
