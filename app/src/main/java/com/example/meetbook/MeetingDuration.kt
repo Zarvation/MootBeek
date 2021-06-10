@@ -5,7 +5,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.job.JobParameters
 import android.app.job.JobService
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.util.Log
@@ -29,6 +32,13 @@ class MeetingDuration : JobService() {
         Thread(Runnable {
             var roomSharedPrefHelper = SharedPrefHelper(this, PrefFileName)
             roomSharedPrefHelper.clearValues()
+
+            var appWidgetManager = AppWidgetManager.getInstance(this)
+            var ids = appWidgetManager.getAppWidgetIds(ComponentName(this,BookedRoomWidget::class.java))
+            var roomBookedIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+            roomBookedIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids)
+            sendBroadcast(roomBookedIntent)
+
             val NotifyID = EXTRA_NOTIFICATION_MEETING
             val ChannelID = ID_CHANNEL_FINISH
             val name = "Meeting End"
@@ -102,6 +112,11 @@ class MeetingDuration : JobService() {
     }
 
     override fun onStopJob(params: JobParameters?): Boolean {
+        var appWidgetManager = AppWidgetManager.getInstance(this)
+        var ids = appWidgetManager.getAppWidgetIds(ComponentName(this,BookedRoomWidget::class.java))
+        var roomBookedIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+        roomBookedIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids)
+        sendBroadcast(roomBookedIntent)
         return true
     }
     companion object {

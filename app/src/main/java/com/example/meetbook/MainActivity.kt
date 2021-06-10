@@ -1,5 +1,8 @@
 package com.example.meetbook
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
@@ -20,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_register.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val PrefFileName = "ROOMFILE001"
@@ -45,8 +49,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this,"Password Belum Diisi",Toast.LENGTH_SHORT).show()
             }
             else{
-                var roomSharedPrefHelper = SharedPrefHelper(this, PrefFileName)
-                roomSharedPrefHelper.clearValues()
+                //var roomSharedPrefHelper = SharedPrefHelper(this, PrefFileName)
+                //roomSharedPrefHelper.clearValues()
 
                 // Ketika login diklik,
                 var state = false // Deklarasi status apakah user terdapat di database

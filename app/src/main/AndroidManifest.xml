@@ -3,16 +3,14 @@
     package="com.example.meetbook">
 
     <!-- Tambahkan permission dan uses permission untuk membaca data dari provider -->
-    <permission android:name="com.example.meetbookadmin.provider.READ_URI_DATABASE"/>
-    <uses-permission android:name="com.example.meetbookadmin.provider.READ_URI_DATABASE"/>
+    <permission android:name="com.example.meetbookadmin.provider.READ_URI_DATABASE" />
 
+    <uses-permission android:name="com.example.meetbookadmin.provider.READ_URI_DATABASE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <!-- Tambahkan uses permission untuk menulis dan membaca external storage -->
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS" /> <!-- Tambahkan uses permission untuk menulis dan membaca external storage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -21,10 +19,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.Light.NoActionBar">
+        <receiver android:name=".AvailableRoomWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/available_room_widget_info" />
+        </receiver>
+        <receiver android:name=".BookedRoomWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/booked_room_widget_info" />
+        </receiver>
+
         <service
             android:name=".MeetingSongService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <receiver
             android:name=".MeetingAlarmReceiver"

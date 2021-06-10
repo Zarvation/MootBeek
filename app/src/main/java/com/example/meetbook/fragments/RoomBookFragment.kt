@@ -3,6 +3,7 @@ package com.example.meetbook.fragments
 import android.app.*
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
+import android.appwidget.AppWidgetManager
 import android.content.*
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -405,6 +406,15 @@ class RoomBookFragment : Fragment() {
             notificationManager?.createNotificationChannel(ChannelFinishMeeting)
 
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        var appWidgetManager = AppWidgetManager.getInstance(context)
+        var ids = appWidgetManager.getAppWidgetIds(ComponentName(context!!,BookedRoomWidget::class.java))
+        var roomBookedIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+        roomBookedIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids)
+        requireContext().sendBroadcast(roomBookedIntent)
     }
 
     companion object {
