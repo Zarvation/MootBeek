@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.room.Room
 import com.example.meetbook.HomeActivity.Companion.current_password
 import com.example.meetbook.HomeActivity.Companion.current_username
+import com.google.android.gms.ads.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_register.*
 import org.jetbrains.anko.doAsync

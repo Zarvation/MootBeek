@@ -25,7 +25,9 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.FragmentActivity
 import com.example.meetbook.*
 import com.example.meetbook.MeetingDuration.Companion.quote
+import com.example.meetbook.R
 import com.example.meetbook.TimePicker
+import com.google.android.gms.ads.*
 import kotlinx.android.synthetic.main.fragment_room_book.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -167,6 +169,17 @@ class RoomBookFragment : Fragment() {
         val endTimePick = view.findViewById<TextView>(R.id.EndTime)
         val buttonBook = view.findViewById<Button>(R.id.BookBtn)
         val quotesText = view.findViewById<TextView>(R.id.Quotes)
+        val adview = view.findViewById<AdView>(R.id.adView)
+
+        MobileAds.initialize(activity){}
+        adview.loadAd(AdRequest.Builder().build())
+
+        adview.adListener = object : AdListener(){
+            override fun onAdFailedToLoad(p0: LoadAdError) {
+                super.onAdFailedToLoad(p0)
+                Toast.makeText(context,"Failed $p0",Toast.LENGTH_SHORT).show()
+            }
+        }
 
         roomtitle.text = param1
         roomcap.text = "${param2.toString()} Seats"

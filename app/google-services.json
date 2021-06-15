@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "421238764345",
+    "project_id": "meetbook-d892e",
+    "storage_bucket": "meetbook-d892e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421238764345:android:cce268a8edd1bc0a08aee8",
+        "android_client_info": {
+          "package_name": "com.example.kotlinsw.meetbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "421238764345-480lp67mcqktk0b81c1dv7q9tsa9cqtr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcMSlWwCFX0FqGox1_QQ19MN1XxQ1eaFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "421238764345-480lp67mcqktk0b81c1dv7q9tsa9cqtr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

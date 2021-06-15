@@ -92,6 +92,9 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7737495986132050~4356432150"/>
     </application>
 
 </manifest>
