@@ -30,7 +30,7 @@ class MeetingAlarmReceiver : BroadcastReceiver() {
         var mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         //var duration: Long = intent.getLongExtra(EXTRA_MEETING_DURATION, 0L)
 
-        val intent = Intent(context, HomeActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(intent)
                 .getPendingIntent(111,PendingIntent.FLAG_UPDATE_CURRENT)

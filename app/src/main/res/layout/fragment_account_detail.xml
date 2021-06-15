@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/ClientName"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="Login as"
@@ -37,6 +37,20 @@
         app:layout_constraintVertical_bias="0.422">-->
 
     <!-- Buat Listview untuk menampilkan history meeting -->
+
+    <ImageButton
+        android:id="@+id/removeAdsBtn"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_marginTop="12dp"
+        android:background="@color/white"
+        android:src="@drawable/adsblock"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.968"
+        app:layout_constraintStart_toEndOf="@+id/ClientName"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/editAccBtn"

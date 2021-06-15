@@ -137,6 +137,7 @@ class RoomBookFragment : Fragment() {
 
     }*/
 
+    private val AdsPrefFileName = "ADSREMOVEFILE001"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Menerima argument
@@ -171,13 +172,19 @@ class RoomBookFragment : Fragment() {
         val quotesText = view.findViewById<TextView>(R.id.Quotes)
         val adview = view.findViewById<AdView>(R.id.adView)
 
-        MobileAds.initialize(activity){}
-        adview.loadAd(AdRequest.Builder().build())
+        var removeAdsPrefHelper = AdsPrefHelper(context!!, AdsPrefFileName)
+        var current = removeAdsPrefHelper.watchTimes
 
-        adview.adListener = object : AdListener(){
-            override fun onAdFailedToLoad(p0: LoadAdError) {
-                super.onAdFailedToLoad(p0)
-                Toast.makeText(context,"Failed $p0",Toast.LENGTH_SHORT).show()
+        MobileAds.initialize(activity){}
+
+        if (current > 0) {
+            adview.loadAd(AdRequest.Builder().build())
+
+            adview.adListener = object : AdListener() {
+                override fun onAdFailedToLoad(p0: LoadAdError) {
+                    super.onAdFailedToLoad(p0)
+                    Toast.makeText(context, "Failed $p0", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

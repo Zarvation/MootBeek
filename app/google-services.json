@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:421238764345:android:cce268a8edd1bc0a08aee8",
+        "mobilesdk_app_id": "1:421238764345:android:ba4eb7509b76c0d508aee8",
         "android_client_info": {
-          "package_name": "com.example.kotlinsw.meetbook"
+          "package_name": "com.example.meetbook"
         }
       },
       "oauth_client": [

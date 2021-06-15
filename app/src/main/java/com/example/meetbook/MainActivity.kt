@@ -20,6 +20,8 @@ import androidx.room.Room
 import com.example.meetbook.HomeActivity.Companion.current_password
 import com.example.meetbook.HomeActivity.Companion.current_username
 import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_register.*
 import org.jetbrains.anko.doAsync
@@ -28,9 +30,21 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val PrefFileName = "ROOMFILE001"
+    private val AdsPrefFileName = "ADSREMOVEFILE001"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        var removeAdsPrefHelper = AdsPrefHelper(this, AdsPrefFileName)
+        //removeAdsPrefHelper.clearValues()
+        var current = removeAdsPrefHelper.watchTimes
+
+        MobileAds.initialize(this){}
+
+        if (current > 0) {
+            adView2.loadAd(AdRequest.Builder().build())
+            adView2.adListener = object : AdListener(){}
+        }
 
         checkBoxRemember.isChecked = false
 
@@ -100,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Ketika button remove diklik, munculkan dialog
-        removeBtn.setOnClickListener {
+        /*removeBtn.setOnClickListener {
             var BuilderDialog = AlertDialog.Builder(this)
             // Gunakan layout dialog_remove_user.xml untuk dialog
             var inflaterDialog = layoutInflater.inflate(R.layout.dialog_remove_user, null)
@@ -127,11 +141,21 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             BuilderDialog.create().show()
-        }
+        }*/
 
         var receiver= AirplaneModeReceiver()
         IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also{
             registerReceiver(receiver,it)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        var removeAdsPrefHelper = AdsPrefHelper(this, AdsPrefFileName)
+        var current = removeAdsPrefHelper.watchTimes
+        if (current > 0) {
+            adView2.loadAd(AdRequest.Builder().build())
+            adView2.adListener = object : AdListener(){}
         }
     }
 

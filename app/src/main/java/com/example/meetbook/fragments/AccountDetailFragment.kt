@@ -1,5 +1,6 @@
 package com.example.meetbook.fragments
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -13,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
@@ -20,6 +22,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.example.meetbook.*
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.OnUserEarnedRewardListener
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import kotlinx.android.synthetic.main.fragment_account_detail.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -41,6 +50,7 @@ private const val ARG_PARAM2 = "param2"
 class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor>*/ {
     // Inisialisasi Filename untuk SharedPreferences
     private val PrefFileName = "ROOMFILE001"
+    private val AdsPrefFileName = "ADSREMOVEFILE001"
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -54,6 +64,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
     // Inisialisasi adapter dan list untuk listView
     lateinit var historyAdapter : ArrayAdapter<String>
     var history  : MutableList<String> = mutableListOf("")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,6 +94,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
 
     private lateinit var ContactListdapter : ContactListRecyclerViewAdapter
     private lateinit var interfaceData: InterfaceData
+    private var mRewardAd : RewardedAd? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         //hapus "return" ganti dengan val View agar dapat memanggil property dari layout fragment
@@ -99,6 +111,25 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         val savedroom = view.findViewById<Button>(R.id.savedRoom)
         //val recyclerviewget = view.findViewById<RecyclerView>(R.id.recyclerViewContactList)
         val edituser = view.findViewById<Button>(R.id.editAccBtn)
+        val removeadsbtn = view.findViewById<ImageButton>(R.id.removeAdsBtn)
+
+        MobileAds.initialize(activity){}
+        removeadsbtn.visibility = View.GONE
+
+        RewardedAd.load(context, "ca-app-pub-3940256099942544/5224354917",
+            AdRequest.Builder().build(),
+            object : RewardedAdLoadCallback(){
+                override fun onAdFailedToLoad(p0: LoadAdError) {
+                    Toast.makeText(context,"No Internet", Toast.LENGTH_SHORT).show()
+                    super.onAdFailedToLoad(p0)
+                    mRewardAd = null
+                }
+                override fun onAdLoaded(p0: RewardedAd) {
+                    super.onAdLoaded(p0)
+                    mRewardAd = p0
+                    removeadsbtn.visibility = View.VISIBLE
+                }
+            })
 
         //Menerima isi argument
         clientName.text = "Login as ${HomeActivity.current_username}"
@@ -172,6 +203,29 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         historyAdapter = ArrayAdapter(context!!,android.R.layout.simple_list_item_1,history)
         historylistview.adapter = historyAdapter
 
+
+        removeadsbtn.setOnClickListener {
+            var removeAdsPrefHelper = AdsPrefHelper(context!!, AdsPrefFileName)
+            var watch_time = removeAdsPrefHelper.watchTimes
+            var BuilderDialog = AlertDialog.Builder(context!!)
+            // Gunakan layout save_meeting.xml untuk dialog
+            var inflaterDialog = layoutInflater.inflate(R.layout.dialog_remove_ads, null)
+            BuilderDialog.setView(inflaterDialog)
+            var getText = inflaterDialog.findViewById<TextView>(R.id.removeadsTxt)
+            var getProgress = inflaterDialog.findViewById<ProgressBar>(R.id.removeadsProg)
+
+            getText.setText("$watch_time more videos")
+            getProgress.max = 5
+            getProgress.progress += 5-watch_time
+
+            // Jika button Save diklik
+            BuilderDialog.setPositiveButton("Watch Ads"){ dialogInterface: DialogInterface, i: Int ->
+                showRewardVideo()
+                removeadsbtn.visibility = View.GONE
+            }
+            BuilderDialog.create().show()
+        }
+
         return view
     }
 
@@ -223,6 +277,17 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         val imageBytes = Base64.decode(param3, Base64.DEFAULT)
         val decodeImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         return decodeImage
+    }
+
+    private fun showRewardVideo() {
+        var removeAdsPrefHelper = AdsPrefHelper(context!!, AdsPrefFileName)
+        var current = removeAdsPrefHelper.watchTimes
+        if(mRewardAd!=null){
+            mRewardAd?.show(this.activity, OnUserEarnedRewardListener() {
+                removeAdsPrefHelper.watchTimes = current - 1
+                Toast.makeText(this.activity,"Thanks for Watching Ads!", Toast.LENGTH_SHORT).show()
+            })
+        }
     }
 
     companion object {
