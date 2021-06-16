@@ -157,6 +157,9 @@ class MainActivity : AppCompatActivity() {
             adView2.loadAd(AdRequest.Builder().build())
             adView2.adListener = object : AdListener(){}
         }
+        else{
+            adView2.visibility = View.GONE
+        }
     }
 
     fun openWeb(view: View) {

@@ -50,6 +50,7 @@ private const val ARG_PARAM2 = "param2"
 class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor>*/ {
     // Inisialisasi Filename untuk SharedPreferences
     private val PrefFileName = "ROOMFILE001"
+    // Inisialisasi Filename untuk SharedPreferences Remove Ads
     private val AdsPrefFileName = "ADSREMOVEFILE001"
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -94,6 +95,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
 
     private lateinit var ContactListdapter : ContactListRecyclerViewAdapter
     private lateinit var interfaceData: InterfaceData
+    // Inisialisasi Rewarded Ad yang akan digunakan
     private var mRewardAd : RewardedAd? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -113,17 +115,22 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         val edituser = view.findViewById<Button>(R.id.editAccBtn)
         val removeadsbtn = view.findViewById<ImageButton>(R.id.removeAdsBtn)
 
+        // Inisialisasi pembentukan Mobile Ads
         MobileAds.initialize(activity){}
+        // Hilangkan tampilan button, bila ads belum diload
         removeadsbtn.visibility = View.GONE
 
+        // Build Ad Request dan Load Rewarded Ad dengan menggunakan key untuk test ad
         RewardedAd.load(context, "ca-app-pub-3940256099942544/5224354917",
             AdRequest.Builder().build(),
             object : RewardedAdLoadCallback(){
                 override fun onAdFailedToLoad(p0: LoadAdError) {
                     Toast.makeText(context,"No Internet", Toast.LENGTH_SHORT).show()
                     super.onAdFailedToLoad(p0)
+                    // Jika Ads gagal diload, kosongkan rewarded ad
                     mRewardAd = null
                 }
+                // Jika berhasil di load, munculkan Ads ke rewarded ad dan munculkan button yang disembunyikan tadi
                 override fun onAdLoaded(p0: RewardedAd) {
                     super.onAdLoaded(p0)
                     mRewardAd = p0
@@ -203,24 +210,33 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         historyAdapter = ArrayAdapter(context!!,android.R.layout.simple_list_item_1,history)
         historylistview.adapter = historyAdapter
 
-
+        // Jika button remove ads diklik, munculkan dialog yang mengindikasikan jumlah ads yang perlu ditonton
+        // untuk menghilangkan ads
         removeadsbtn.setOnClickListener {
+            // Panggil shared pref untuk remove ads
             var removeAdsPrefHelper = AdsPrefHelper(context!!, AdsPrefFileName)
+            // ambil jumlah ads yang perlu ditonton saat ini
             var watch_time = removeAdsPrefHelper.watchTimes
             var BuilderDialog = AlertDialog.Builder(context!!)
-            // Gunakan layout save_meeting.xml untuk dialog
+            // Gunakan layout dialog_remove_ads.xml untuk dialog
             var inflaterDialog = layoutInflater.inflate(R.layout.dialog_remove_ads, null)
             BuilderDialog.setView(inflaterDialog)
             var getText = inflaterDialog.findViewById<TextView>(R.id.removeadsTxt)
             var getProgress = inflaterDialog.findViewById<ProgressBar>(R.id.removeadsProg)
 
-            getText.setText("$watch_time more videos")
+            // Set text jumlah video yang perlu ditonton
+            getText.setText("$watch_time more videos to Remove Ads")
+            // Set progress bar untuk progress tontonan saat ini
             getProgress.max = 5
             getProgress.progress += 5-watch_time
 
-            // Jika button Save diklik
+            // Jika button Watch Ad diklik
             BuilderDialog.setPositiveButton("Watch Ads"){ dialogInterface: DialogInterface, i: Int ->
-                showRewardVideo()
+                // Bila watch ad masih lebih besar dari 0, jalankan fungsi rewarded ad
+                if (watch_time > 0) {
+                    showRewardVideo()
+                }
+                // hilangkan kembali removeads button
                 removeadsbtn.visibility = View.GONE
             }
             BuilderDialog.create().show()
@@ -279,10 +295,15 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         return decodeImage
     }
 
+    // Buat fungsi menampilkan rewarded ads video
     private fun showRewardVideo() {
+        // panggil sharedpref remove ads
         var removeAdsPrefHelper = AdsPrefHelper(context!!, AdsPrefFileName)
+        // ambil jumlah video yang perlu ditonton saat ini
         var current = removeAdsPrefHelper.watchTimes
+        // Jika video ada
         if(mRewardAd!=null){
+            // tampilkan video, dan setelah video ditonton, set jumlah video yang perlu ditonton menjadi dikurangi 1 dari sebelumnya
             mRewardAd?.show(this.activity, OnUserEarnedRewardListener() {
                 removeAdsPrefHelper.watchTimes = current - 1
                 Toast.makeText(this.activity,"Thanks for Watching Ads!", Toast.LENGTH_SHORT).show()

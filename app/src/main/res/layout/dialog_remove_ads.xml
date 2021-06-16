@@ -2,12 +2,15 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
     <TextView
         android:id="@+id/removeadsTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="5 more videos to remove Ads"/>
+        android:text="5 more videos to Remove Ads"
+        android:textColor="@color/black"
+        android:textSize="18sp"/>
     <ProgressBar
         android:id="@+id/removeadsProg"
         android:layout_width="match_parent"

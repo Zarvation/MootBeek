@@ -172,15 +172,21 @@ class RoomBookFragment : Fragment() {
         val quotesText = view.findViewById<TextView>(R.id.Quotes)
         val adview = view.findViewById<AdView>(R.id.adView)
 
+        // Panggil prefhelper untuk remove ads, dan ambil jumlah video saat ini yang perlu ditonton
         var removeAdsPrefHelper = AdsPrefHelper(context!!, AdsPrefFileName)
         var current = removeAdsPrefHelper.watchTimes
 
+        // Lakukan inisialisasi mobile ads
         MobileAds.initialize(activity){}
 
+        // bila masih lebih besar dari 0, tampilkan banner
         if (current > 0) {
+            // Build Ads Request dan Load ke dalam AdView yang ditambahkan
             adview.loadAd(AdRequest.Builder().build())
 
+            // Gunakan ad listener untuk menentukan aksi-aksi terhadap iklan yang ditampilkan
             adview.adListener = object : AdListener() {
+                // Jika Ad gagal ditampilkan, munculkan toast
                 override fun onAdFailedToLoad(p0: LoadAdError) {
                     super.onAdFailedToLoad(p0)
                     Toast.makeText(context, "Failed $p0", Toast.LENGTH_SHORT).show()
