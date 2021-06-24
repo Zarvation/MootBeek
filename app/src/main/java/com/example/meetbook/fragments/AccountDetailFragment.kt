@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.example.meetbook.*
+import com.example.meetbook.HomeActivity.Companion.current_password
+import com.example.meetbook.HomeActivity.Companion.current_username
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
@@ -70,12 +72,12 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            param1 = it.getString(ARG_CLIENT_NAME)
+            param2 = it.getString(ARG_CLIENT_PASSWORD)
             param3 = it.getInt(ARG_CLIENT_ID)
         }
 
-        var db= Room.databaseBuilder(
+        /*var db= Room.databaseBuilder(
                 context!!,
                 RoomUserDBHelper::class.java,
                 "meetbookDb.db"
@@ -86,7 +88,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
                 param1 = allData.username
                 param2 = allData.password
             }
-        }
+        }*/
 
         //LoaderManager.getInstance(this).initLoader(1,null,this)
     }
@@ -199,7 +201,7 @@ class AccountDetailFragment : Fragment()/*, LoaderManager.LoaderCallbacks<Cursor
         }
 
         edituser.setOnClickListener {
-            interfaceData.openEditUser(param3!!,param1!!,param2!!)
+            interfaceData.openEditUser(param3!!,current_username, current_password)
         }
 
         history.clear()

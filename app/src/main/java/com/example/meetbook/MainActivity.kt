@@ -29,11 +29,17 @@ import org.jetbrains.anko.uiThread
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    // Inisialisasi controller yang telah dibuat
+    lateinit var controller: FirebaseController
     private val PrefFileName = "ROOMFILE001"
     private val AdsPrefFileName = "ADSREMOVEFILE001"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Panggil controller
+        controller = FirebaseController(this)
+        controller.getUserList()
 
         var removeAdsPrefHelper = AdsPrefHelper(this, AdsPrefFileName)
         //removeAdsPrefHelper.clearValues()
@@ -68,12 +74,29 @@ class MainActivity : AppCompatActivity() {
                 //roomSharedPrefHelper.clearValues()
 
                 // Ketika login diklik,
-                var state = false // Deklarasi status apakah user terdapat di database
+                //var state = false // Deklarasi status apakah user terdapat di database
                 // Deklarasi user dan pass yang dimasukkan
                 var datuser = LUsername.text.toString()
                 var datpass = LPassword.text.toString()
 
                 doAsync {
+                    // Lakukan proses autentikasi user dengan fungsi authUser dari controller
+                    var state = controller.authUser(datuser,datpass)
+                    if (state){
+                        // Jika User terdaftar, kirimkan ID ke HomeActivity
+                        var client = Client(1, LUsername.text.toString(), LPassword.text.toString())
+                        IntentToHome.putExtra(
+                            EXTRA_CLIENT_DATA,
+                            client
+                        ) // Mengirim Extra dengan key yang tersimpan di Keys.kt
+
+                        // Kirimkan username dan password ke dalam companion object milik HomeActivity
+                        current_username = datuser
+                        current_password = datpass
+                        // Mulai activity
+                        startActivity(IntentToHome)
+                    }
+                    /* Ganti ke firebase
                     // Ambil data dari User dengan memanggil fungsi getAllData() dari db.userDao()
                     var userList = db.userDao().getAllData()
                     // Lakukan pengecekan apakah username dan password yang diinput sesuai/terdaftar
@@ -97,6 +120,8 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
+
+                     */
                     uiThread {
                         if (state) {
                             Toast.makeText(this@MainActivity, "Login Sukses", Toast.LENGTH_SHORT)

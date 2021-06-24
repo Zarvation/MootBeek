@@ -11,9 +11,14 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class RegisterActivity : AppCompatActivity() {
+    // Inisialisasi controller yang telah dibuat
+    lateinit var controller: FirebaseController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        // Panggil controller
+        controller = FirebaseController(this)
 
         // Buat dan panggil database dengan databaseBuilder
         var db= Room.databaseBuilder(
@@ -26,24 +31,19 @@ class RegisterActivity : AppCompatActivity() {
         RegisButton.setOnClickListener {
             // Jika username dan password terisi
             if (RUsername.text.toString().length>0 && RPassword.text.toString().length>0){
-                var state = true // Deklarasi status apakah username pernah diisi
+                //var state = false // Deklarasi status apakah username pernah diisi
                 // Ambil username dan password yang diisi
                 var datuser = RUsername.text.toString()
                 var datpass = RPassword.text.toString()
 
-                doAsync {
-                    // Ambil data dari User dengan memanggil fungsi getAllData() dari db.userDao()
-                    var userList = db.userDao().getAllData()
-                    // Lakukan pengecekan apakah username telah terdaftar
-                    for(allData in userList){
-                        if (datuser == allData.username){
-                            state = false // Jika ada, maka status dijadikan false kemudian
-                            break // hentikan pengecekan
-                        }
-                    }
-
-                    // Jika status true (username valid)
-                    if (state) {
+                // Cek apakah username bisa digunakan atau belum dibuat sebelumnya
+                var state = controller.validityUser(datuser)
+                // Jika status true (username valid)
+                if (state) {
+                    // Panggil fungsi insertUser untuk menambah user ke database
+                    controller.insertUser(Users(datuser,datpass))
+                    RegisStatus.text="User ${RUsername.text} has been created"
+                    /* Ganti jadi Firebase
                         // Insert/Masukkan data user (Username dan Password) ke dalam database dengan
                         // menggunakan insertAll()
                         db.userDao().insertAll(
@@ -51,16 +51,30 @@ class RegisterActivity : AppCompatActivity() {
                                 userList.size+1,datuser,datpass
                             ) // Masukkan User yang berisi id, username, dan password
                         )
-                    }
-                    uiThread {
-                        if (state) {
-                            RegisStatus.text="User ${RUsername.text} has been created"
-                        }
-                        else{
-                            RegisStatus.text="User ${RUsername.text} has been created before !!!"
-                        }
-                    }
+                        */
                 }
+                else{
+                    RegisStatus.text="User ${RUsername.text} has been created before !!!"
+                }
+                //doAsync {
+                    /* Unused --> Ganti jadi firebase
+                    // Ambil data dari User dengan memanggil fungsi getAllData() dari db.userDao()
+                    //var userList = db.userDao().getAllData()
+                    // Lakukan pengecekan apakah username telah terdaftar
+                    //for(allData in userList){
+                        //if (datuser == allData.username){
+                        //    state = false // Jika ada, maka status dijadikan false kemudian
+                        //    break // hentikan pengecekan
+                        //}
+                    //}*/
+
+
+
+
+                    //uiThread {
+
+                    //}
+                //}
 
             }
             else {RegisStatus.text="Username and Password cannot be empty"}

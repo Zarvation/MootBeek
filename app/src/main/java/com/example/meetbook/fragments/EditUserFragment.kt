@@ -10,12 +10,9 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.room.Room
-import com.example.meetbook.ARG_CLIENT_NAME
-import com.example.meetbook.ARG_CLIENT_PASSWORD
+import com.example.meetbook.*
 import com.example.meetbook.HomeActivity.Companion.current_password
 import com.example.meetbook.HomeActivity.Companion.current_username
-import com.example.meetbook.R
-import com.example.meetbook.RoomUserDBHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_edit_user.*
 import org.jetbrains.anko.doAsync
@@ -38,6 +35,8 @@ class EditUserFragment : Fragment() {
     private var paramID: Int? = null
     private var paramUser: String? = null
     private var paramPass: String? = null
+    // Inisialisasi controller yang telah dibuat
+    lateinit var controller: FirebaseController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +51,11 @@ class EditUserFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        // Panggil controller
+        controller = FirebaseController(context!!)
+        controller.getUserList()
+
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_edit_user, container, false)
 
@@ -60,7 +64,8 @@ class EditUserFragment : Fragment() {
         val usernameText = view.findViewById<EditText>(R.id.editTextUsername)
         val passwordText = view.findViewById<EditText>(R.id.editTextPassword)
         val savebtn = view.findViewById<Button>(R.id.SaveBtn)
-
+        //textuser.text = paramUser
+        //textpass.text = paramUser + " hey"
         // Buat dan panggil database dengan databaseBuilder
         var db= Room.databaseBuilder(
             context!!, // Darimana di build
@@ -83,8 +88,17 @@ class EditUserFragment : Fragment() {
             // Jika tidak
             else {
                 doAsync {
+                    // Lakukan cek apakah username yang baru valid dan bisa digunakan
+                    var state = controller.validityUser(newUsername)
+                    // Jika iya, lakukan proses update user dengan fungsi updateUser dari controller
+                    if (state) {
+                        controller.updateUser(paramUser!!, newUsername, newPassword)
+                        /* Ganti ke firebase
                     // Update data user dengan updateDB() dengan memasukkan id dari extra, username dan password
                     db.userDao().updateDB(paramID!!, newUsername, newPassword)
+
+                     */
+                    }
                     uiThread {
                         // Update isi companion object dengan username dan password yang baru
                         current_username = newUsername

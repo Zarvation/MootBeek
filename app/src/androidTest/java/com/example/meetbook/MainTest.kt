@@ -94,7 +94,7 @@ class MainTest{
                 hasData(Uri.parse("https://www.google.com/search?q=supportus")) // Intent memiliki data Uri https://www.google.com/search?q=supportus
         )
         // Klik tombol support
-        onView(withId(R.id.SupportText)).perform(click())
+        //onView(withId(R.id.SupportText)).perform(click())
         // Jalankan Intent
         intended(expectedIntent)
     }
